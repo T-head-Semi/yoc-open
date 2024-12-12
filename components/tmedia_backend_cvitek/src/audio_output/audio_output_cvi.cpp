@@ -52,9 +52,9 @@ void *TMAudioOutputCvi::Task(void *args)
 int TMAudioOutputCvi::Open(string deviceName, TMPropertyList *propList) 
 {
     int sampleRate;		    
-    AudioSampleBits_e       sampleBits;		
-    AudioSampleChannels_e   sampleChannels;		
-    AudioPcmDataType_e      pcmDataType;		
+    AudioSampleBits_e       sampleBits{AUDIO_SAMPLE_BITS_UNKNOW};		
+    AudioSampleChannels_e   sampleChannels{AUDIO_SAMPLE_CHANNE_UNKNOW};		
+    AudioPcmDataType_e      pcmDataType{AUDIO_PCM_ACCESS_RW_UNKNOW};			
     propList->Get(TMAudioOutput::PropID::AUDIO_OUT_SAMPLE_RATE, (int *)&sampleRate);
     propList->Get(TMAudioOutput::PropID::AUDIO_OUT_SAMPLE_BITS, (int *)&sampleBits);		
     propList->Get(TMAudioOutput::PropID::AUDIO_OUT_SAMPLE_CHANNELS, (int *)&sampleChannels);		
@@ -153,9 +153,9 @@ int TMAudioOutputCvi::SendFrame(TMAudioFrame &frame, int timeout)
     }
 
     int sampleRate;		    
-    AudioSampleBits_e       sampleBits;		
-    AudioSampleChannels_e   sampleChannels;		
-    AudioPcmDataType_e      pcmDataType;		
+    AudioSampleBits_e       sampleBits{AUDIO_SAMPLE_BITS_UNKNOW};		
+    AudioSampleChannels_e   sampleChannels{AUDIO_SAMPLE_CHANNE_UNKNOW};		
+    AudioPcmDataType_e      pcmDataType{AUDIO_PCM_ACCESS_RW_UNKNOW};		
     mCurrentPropertyList.Get(TMAudioOutput::PropID::AUDIO_OUT_SAMPLE_RATE, (int *)&sampleRate);
     mCurrentPropertyList.Get(TMAudioOutput::PropID::AUDIO_OUT_SAMPLE_BITS, (int *)&sampleBits);		
     mCurrentPropertyList.Get(TMAudioOutput::PropID::AUDIO_OUT_SAMPLE_CHANNELS, (int *)&sampleChannels);		

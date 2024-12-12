@@ -12,6 +12,7 @@ TMCodec::TMCodec()
     : mCodecID(TMMediaInfo::CodecID::UNKNOWN),
       mWorkMode(TMMediaInfo::WorkMode::UNKNOWN)
 {
+    mMediaType = TMMediaInfo::Type::UNKNOWN;
 }
 
 TMCodec::~TMCodec()

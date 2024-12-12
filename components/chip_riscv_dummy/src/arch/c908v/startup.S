@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <csi_config.h>
@@ -83,7 +97,11 @@ Reset_Handler:
 #endif
 
 #ifdef CONFIG_KERNEL_NONE
-    la   sp, g_top_mainstack
+    la   sp, g_base_mainstack
+    addi t1, a0, 1
+    li   t2, CONFIG_ARCH_MAINSTACK
+    mul  t1, t1, t2
+    add  sp, sp, t1 /* sp = (cpuid + 1) * CONFIG_ARCH_MAINSTACK + g_base_mainstack */
 #else
     la   sp, g_base_irqstack
     addi t1, a0, 1
@@ -117,6 +135,12 @@ Reset_Handler:
     la   a0, pre_main
     jalr a0
 
+.size   Reset_Handler, . - Reset_Handler
+
+__exit:
+    j      __exit
+
+    .type   secondary_cpu_entry, %function
 secondary_cpu_entry:
 #if defined(CONFIG_SMP) && CONFIG_SMP
     la a0, secondary_boot_flag
@@ -128,19 +152,15 @@ secondary_cpu_entry:
 
 #if defined(CONFIG_SMP) && CONFIG_SMP
 1:
-    tail secondary_cpu_c_start
+    jal secondary_cpu_c_start
+
+.size   secondary_cpu_entry, . - secondary_cpu_entry
 
 hart_out_of_bounds_loop:
     /* Harts in this loop are out of bounds, increase CONFIG_NR_CPUS. */
     wfi
     j	hart_out_of_bounds_loop
 #endif
-
-    .size   Reset_Handler, . - Reset_Handler
-
-__exit:
-    j      __exit
-
 
 .section .stack
     .align  4
@@ -155,7 +175,7 @@ g_top_irqstack:
     .global g_base_mainstack
     .global g_top_mainstack
 g_base_mainstack:
-    .space CONFIG_ARCH_MAINSTACK
+    .space CONFIG_ARCH_MAINSTACK * CONFIG_NR_CPUS
 g_top_mainstack:
 #endif
 

@@ -15,6 +15,7 @@
 #include <rtthread.h>
 #include <csi_core.h>
 #include <soc.h>
+#include <drv/tick.h>
 #include <asm/riscv_csr.h>
 
 enum C920_MP
@@ -137,6 +138,13 @@ void clint_ipi_clear(uint64_t id)
  */
 int rt_hw_tick_init(void)
 {
+    int core_id = rt_hw_cpu_id();
+
+    if (core_id == C920_CORE0)
+    {
+        return 0;
+    }
+    csi_tick_init();
     return 0;
 }
 
@@ -151,7 +159,7 @@ int rt_hw_tick_init(void)
 int rt_hw_clint_ipi_enable(void)
 {
     /* Set the Machine-Software bit in MIE */
-    csr_set(0x304, SR_MIE);
+    rv_csr_set(0x304, SR_MIE);
     return 0;
 }
 
@@ -218,7 +226,7 @@ void rt_hw_scondary_interrupt_init(void)
 
     /* enable MEIE & MSIE */
     uint32_t mie = __get_MIE();
-    mie |= (1 << 11 | 1 << 3);
+    mie |= (1 << 11 | 1 << 7 | 1 << 3);
 #if CONFIG_ECC_L1_ENABLE
     mie |= (1 << 16);
 #endif

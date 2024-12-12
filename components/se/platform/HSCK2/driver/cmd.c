@@ -87,7 +87,7 @@ SGD_RV Back_secondary_boot (void)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}			
@@ -112,7 +112,7 @@ SGD_RV Back_secondary_boot (void)
 			{
 				return SDR_COMMFAIL;
 			}
-			if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+			if (ulTmpLen == 0)
 			{
 				return SDR_COMMFAIL;
 			}			
@@ -135,7 +135,7 @@ SGD_RV Back_secondary_boot (void)
             {
                 return SDR_COMMFAIL;
             }
-            if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+            if (ulTmpLen == 0)
             {
                 return SDR_COMMFAIL;
             }			
@@ -194,7 +194,7 @@ SGD_RV hs_Initialization_before_downloading_firmware (void)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}			
@@ -258,7 +258,7 @@ SGD_RV hs_downloading_firmware (const SGD_UCHAR *EncBin, SGD_UINT32 EncBinLen)
         {
             return SDR_COMMFAIL;
         }
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }			
@@ -290,7 +290,7 @@ SGD_RV hs_downloading_firmware (const SGD_UCHAR *EncBin, SGD_UINT32 EncBinLen)
         {
             return SDR_COMMFAIL;
         }
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }			
@@ -340,7 +340,7 @@ SGD_RV hs_Activate_the_app (void)
     {
         return SDR_COMMFAIL;
     }
-    if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+    if (ulTmpLen == 0)
     {
         return SDR_COMMFAIL;
     }			
@@ -362,7 +362,7 @@ SGD_RV hs_Activate_the_app (void)
     {
         return SDR_COMMFAIL;
     }
-    if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+    if (ulTmpLen == 0)
     {
         return SDR_COMMFAIL;
     }			
@@ -412,7 +412,7 @@ SGD_RV hs_GetAppVersion( SGD_UINT8* pOutVersion, SGD_UINT32 *pulVersiondLen)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}			
@@ -456,7 +456,7 @@ SGD_RV GetRandom(SGD_UINT32 Len, SGD_UINT8* pOutRand)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}			
@@ -608,7 +608,7 @@ SGD_RV hs_ExternalAuth(SGD_UCHAR* rootkey)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_EXECUTION_ERROR;
 	}
@@ -699,7 +699,7 @@ SGD_RV Import_rootkey(SGD_UCHAR *rootkey, SGD_UCHAR *Key, SGD_UINT32 Len)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -792,7 +792,7 @@ SGD_RV Import_key_encrypting_key(SGD_UCHAR *rootkey, SGD_UINT32 KeyIndex,SGD_UCH
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -886,7 +886,7 @@ SGD_RV Import_ECCKey(SGD_UINT32 key_encrypting_key_KeyIndex, SGD_UCHAR *key_encr
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -983,7 +983,7 @@ SGD_RV Import_RSA1024Key(SGD_UINT32 key_encrypting_key_KeyIndex, SGD_UCHAR *key_
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1080,7 +1080,7 @@ SGD_RV Import_RSA2048Key(SGD_UINT32 key_encrypting_key_KeyIndex, SGD_UCHAR *key_
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1188,7 +1188,7 @@ SGD_RV Import_AESKey( SGD_UINT32 key_encrypting_key_KeyIndex, SGD_UCHAR *key_enc
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1341,7 +1341,7 @@ SGD_RV hs_export_Key(SGD_UINT32 key_type, SGD_UINT32 KeyIndex, SGD_UCHAR *Key, S
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1429,7 +1429,7 @@ SGD_RV hs_AES_Encrypt(SGD_UINT32 mode,SGD_UINT32 key_flag, SGD_UCHAR *ivdata, SG
             return SDR_COMMFAIL;
         }
 
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -1466,7 +1466,7 @@ SGD_RV hs_AES_Encrypt(SGD_UINT32 mode,SGD_UINT32 key_flag, SGD_UCHAR *ivdata, SG
             return SDR_COMMFAIL;
         }
         
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -1501,7 +1501,7 @@ SGD_RV hs_AES_Encrypt(SGD_UINT32 mode,SGD_UINT32 key_flag, SGD_UCHAR *ivdata, SG
             return SDR_COMMFAIL;
         }
         
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -1590,7 +1590,7 @@ SGD_RV hs_AES_Decrypt(SGD_UINT32 mode, SGD_UINT32 key_flag, SGD_UCHAR *ivdata, S
             return SDR_COMMFAIL;
         }
 
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -1627,7 +1627,7 @@ SGD_RV hs_AES_Decrypt(SGD_UINT32 mode, SGD_UINT32 key_flag, SGD_UCHAR *ivdata, S
             return SDR_COMMFAIL;
         }
         
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -1662,7 +1662,7 @@ SGD_RV hs_AES_Decrypt(SGD_UINT32 mode, SGD_UINT32 key_flag, SGD_UCHAR *ivdata, S
             return SDR_COMMFAIL;
         }
         
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -1714,7 +1714,7 @@ SGD_RV hs_GenerateECCKeyPair(SGD_UINT32 KeyIndex)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1775,7 +1775,7 @@ SGD_RV hs_ECC_Encrypt(SGD_UINT32 KeyIndex, SGD_UCHAR *Data, SGD_UINT32 DataLengt
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1840,7 +1840,7 @@ SGD_RV hs_ECC_Decrypt(SGD_UINT32 KeyIndex, SGD_UCHAR *EncData, SGD_UINT32 EncDat
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1905,7 +1905,7 @@ SGD_RV hs_ECC_Sign(SGD_UINT32 KeyIndex, SGD_UINT32 HashFlag, SGD_UCHAR *InputDat
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -1972,7 +1972,7 @@ SGD_RV hs_ECC_Verify(SGD_UINT32 KeyIndex, SGD_UCHAR HashFlag, SGD_UCHAR *InputDa
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2028,7 +2028,7 @@ SGD_RV hs_GenerateRSAKeyPair(SGD_UINT32 type, SGD_UINT32 KeyIndex)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2099,7 +2099,7 @@ SGD_RV hs_RSA_Encrypt(SGD_UINT32 type, SGD_UINT32 KeyIndex, SGD_UCHAR *Data, SGD
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2173,7 +2173,7 @@ SGD_RV hs_RSA_Decrypt(SGD_UINT32 type, SGD_UINT32 KeyIndex, SGD_UCHAR *EncData, 
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2246,7 +2246,7 @@ SGD_RV hs_RSA_Sign(SGD_UINT32 type, SGD_UINT32 KeyIndex, SGD_UCHAR *InputData, S
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2325,7 +2325,7 @@ SGD_RV hs_RSA_Verify(SGD_UINT32 type, SGD_UINT32 KeyIndex, SGD_UCHAR *hashData, 
 		return SDR_COMMFAIL;
 	}
 
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2397,7 +2397,7 @@ SGD_RV hs_hash_start(SGD_UINT32 type)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2457,7 +2457,7 @@ SGD_RV hs_hash_update(SGD_UCHAR *input, SGD_UINT32 Len)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2512,7 +2512,7 @@ SGD_RV hs_hash_finish(SGD_UCHAR *output, SGD_UINT32 *len)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2571,7 +2571,7 @@ SGD_RV hs_hmac_set_key(SGD_UCHAR *key, SGD_UINT32 key_len)
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2634,7 +2634,7 @@ SGD_RV hs_hmac_calc(SGD_UCHAR *input, SGD_UINT32 input_Len, SGD_UCHAR *output, S
 		return SDR_COMMFAIL;
 	}
 	
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2722,7 +2722,7 @@ SGD_RV  hs_Write_user_info(SGD_UINT32 offset, SGD_UINT32 Len, SGD_UCHAR *data)
         {
             return SDR_COMMFAIL;
         }
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -2752,7 +2752,7 @@ SGD_RV  hs_Write_user_info(SGD_UINT32 offset, SGD_UINT32 Len, SGD_UCHAR *data)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}
@@ -2821,7 +2821,7 @@ SGD_RV  hs_Read_user_info(SGD_UINT32 offset, SGD_UINT32 Len, SGD_UCHAR *data)
         {
             return SDR_COMMFAIL;
         }
-        if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+        if (ulTmpLen == 0)
         {
             return SDR_COMMFAIL;
         }
@@ -2851,7 +2851,7 @@ SGD_RV  hs_Read_user_info(SGD_UINT32 offset, SGD_UINT32 Len, SGD_UCHAR *data)
 	{
 		return SDR_COMMFAIL;
 	}
-	if ((tmpOutBuf == 0) || (ulTmpLen == 0))
+	if (ulTmpLen == 0)
 	{
 		return SDR_COMMFAIL;
 	}

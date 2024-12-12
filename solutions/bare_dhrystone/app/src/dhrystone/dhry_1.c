@@ -90,7 +90,7 @@ void Proc_5 (void);
 
 /* end of variables for time measurement */
 
-
+SECTION_ATTR
 void benchmark_dhry_main(void)
 /*****/
 
@@ -308,7 +308,7 @@ void benchmark_dhry_main(void)
 
 }
 
-
+SECTION_ATTR
 void Proc_1 (Ptr_Val_Par)
 /******************/
 
@@ -342,7 +342,7 @@ REG Rec_Pointer Ptr_Val_Par;
     structassign (*Ptr_Val_Par, *Ptr_Val_Par->Ptr_Comp);
 } /* Proc_1 */
 
-
+SECTION_ATTR
 void Proc_2 (Int_Par_Ref)
 /******************/
     /* executed once */
@@ -365,7 +365,7 @@ One_Fifty   *Int_Par_Ref;
   while (Enum_Loc != Ident_1); /* true */
 } /* Proc_2 */
 
-
+SECTION_ATTR
 void Proc_3 (Ptr_Ref_Par)
 /******************/
     /* executed once */
@@ -380,7 +380,7 @@ Rec_Pointer *Ptr_Ref_Par;
   Proc_7 (10, Int_Glob, &Ptr_Glob->variant.var_1.Int_Comp);
 } /* Proc_3 */
 
-
+SECTION_ATTR
 void Proc_4 () /* without parameters */
 /*******/
     /* executed once */
@@ -392,7 +392,7 @@ void Proc_4 () /* without parameters */
   Ch_2_Glob = 'B';
 } /* Proc_4 */
 
-
+SECTION_ATTR
 void Proc_5 () /* without parameters */
 /*******/
     /* executed once */

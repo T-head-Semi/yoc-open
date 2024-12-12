@@ -8,6 +8,14 @@ using namespace std;
 
 TMTsDemuxerSeno::TMTsDemuxerSeno()
 {
+    mPacket = NULL;
+    mDemux = NULL;
+    mRingBufferInPtr = NULL;
+    mRingBufferOutPtr = NULL;
+    mPnum = 0;
+    mPacketFull = false;
+    mSendAble = false;
+    mRecvAble = false;
 }
 
 TMTsDemuxerSeno::~TMTsDemuxerSeno()
@@ -244,7 +252,8 @@ int TMTsDemuxerSeno::RecvPacket(TMPacket &pkt, int timeout)
             mRingBufferOutPtr->Clear();
             pes_data_len = int(mDemux->mOutPropty.pes_data.size());
             copy(mDemux->mOutPropty.pes_data.begin(), mDemux->mOutPropty.pes_data.end(), mTempPesData);
-            mRingBufferOutPtr->Write(mTempPesData, pes_data_len);
+            int ret;
+            ret = mRingBufferOutPtr->Write(mTempPesData, pes_data_len);
             stream_id_before = mDemux->mOutPropty.stream_id;
             pts_before = mDemux->mOutPropty.pts;
             dts_before = mDemux->mOutPropty.dts;
@@ -262,6 +271,11 @@ int TMTsDemuxerSeno::RecvPacket(TMPacket &pkt, int timeout)
             pkt.mDTS.SetDefault(time_dts_mpeg);
             pkt.mStreamIndex = stream_id_before;
             pkt.mCodecID = MapType(estype_before);
+            if (ret == -1)
+            {
+                mPacketFull = true;
+                break;
+            }
             mPnum++;
         }
         else

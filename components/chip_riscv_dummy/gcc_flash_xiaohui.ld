@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 MEMORY
@@ -60,7 +74,7 @@ SECTIONS
   *(.rodata.*)
   *(.rodata.str1.4)
   *(.srodata*)
-  . = ALIGN(0x4) ;
+  . = ALIGN(0x8) ;
 
   __init_array_start = .;
   __ctors_start__ = .;
@@ -69,6 +83,7 @@ SECTIONS
   __init_array_end = .;
   __ctors_end__ = .;
 
+  . = ALIGN(0x8) ;
   __fini_array_start = .;
   __dtors_start__ = .;
   KEEP (*(SORT(.fini_array.*)))
@@ -76,6 +91,7 @@ SECTIONS
   __fini_array_end = .;
   __dtors_end__ = .;
 
+  . = ALIGN(0x8) ;
   __ctor_start__ = .;
   KEEP (*(SORT(.ctors.*)))
   KEEP (*(.ctors))
@@ -212,14 +228,16 @@ SECTIONS
   *(__libc_subinit)
   *(__libc_subfreeres)
   *(.note.ABI-tag)
-  __edata = .;
-  __data_end__ = .;
   . = ALIGN(0x4) ;
- } > REGION_DATA
- .gcc_except_table : ONLY_IF_RW {
-  *(.gcc_except_table .gcc_except_table.*)
   __edata = .;
   __data_end__ = .;
+ } > REGION_DATA
+ ._ram_code : {
+  . = ALIGN(0x4) ;
+  __ram_code_start__ = .;
+  *(.ram.code*)
+  . = ALIGN(0x4) ;
+  __ram_code_end__ = .;
  } > REGION_DATA
  .bss : {
   . = ALIGN(0x4) ;

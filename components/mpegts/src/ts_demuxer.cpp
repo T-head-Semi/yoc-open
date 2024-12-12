@@ -1,5 +1,19 @@
 /*
- * Copyright (C) 2018-2023 Alibaba Group Holding Limited
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include <mpegts/ts_demuxer.hpp>
 #include <mpegts/ts_misc.h>
@@ -44,6 +58,7 @@ void Stream::Write(Packet::const_iterator b, Packet::const_iterator e)
             fprintf(stderr, "stream=%d PID=%d write failed!\n", m_id, m_pid);
             fclose(m_file);
             m_file = NULL;
+            break;
         }
     }
 }
@@ -461,16 +476,7 @@ bool TsDemuxer::readPAT(Packet::const_iterator &p, Packet::const_iterator e)
     while (p < e)
     {
         const uint8_t id = *p++;
-        if (id == STUFFING_BYTE)
-        {
-            if (!done)
-            {
-                fprintf(stderr, "[error]: there is a empty PAT packet!\n");
-                return false;
-            }
-            return true;
-        }
-        else if (id == TABLE_ID::NIL_TABLE)
+        if (id == TABLE_ID::NIL_TABLE)
         {
             if (!done)
             {

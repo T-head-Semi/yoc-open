@@ -1,3 +1,4 @@
+#include <csi_core.h>
 #include <aos/aos.h>
 #include <aos/cli.h>
 
@@ -30,6 +31,7 @@ void example_main()
     delay_19s_time = aos_now_ms();
     printf("now time = %llu ms after 19s, will be delay  1s....\n", delay_19s_time);
     aos_msleep(1000);
+    __DSB();
     cur_time = aos_now_ms();
     printf("now time = %llu ms after delay 1s \n", cur_time);
     if ((delay_19s_time - expect_time) < 0 || (cur_time - delay_19s_time - delay_1s_time) < 0) {

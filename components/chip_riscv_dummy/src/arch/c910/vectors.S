@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "riscv_asm_macro.h"
@@ -88,8 +102,17 @@ Scoret_Handler:
     .weak   Mcoret_Handler
     .type   Mcoret_Handler, %function
 Mcoret_Handler:
+    addi    sp, sp, -16
+    sd      t0, (0)(sp)
+    sd      t1, (8)(sp)
     csrw    mscratch, sp
-    la      sp, g_top_irqstack
+
+    csrr    t0, mhartid
+    la      sp, g_base_irqstack
+    addi    t1, t0, 1
+    li      t0, CONFIG_ARCH_INTERRUPTSTACK
+    mul     t1, t1, t0
+    add     sp, sp, t1 /* sp = (cpuid + 1) * CONFIG_ARCH_INTERRUPTSTACK + g_base_irqstack */
 
     addi    sp, sp, -(76+76)
     sd      t0, (4+4)(sp)
@@ -148,6 +171,10 @@ Mcoret_Handler:
 
     addi    sp, sp, (76+76)
     csrr    sp, mscratch
+
+    ld      t0, (0)(sp)
+    ld      t1, (8)(sp)
+    addi    sp, sp, 16
     mret
 
 #if CONFIG_ECC_L1_ENABLE
@@ -156,8 +183,17 @@ Mcoret_Handler:
     .weak   ECC_L1_Handler
     .type   ECC_L1_Handler, %function
 ECC_L1_Handler:
+    addi    sp, sp, -16
+    sd      t0, (0)(sp)
+    sd      t1, (8)(sp)
     csrw    mscratch, sp
-    la      sp, g_top_irqstack
+
+    csrr    t0, mhartid
+    la      sp, g_base_irqstack
+    addi    t1, t0, 1
+    li      t0, CONFIG_ARCH_INTERRUPTSTACK
+    mul     t1, t1, t0
+    add     sp, sp, t1 /* sp = (cpuid + 1) * CONFIG_ARCH_INTERRUPTSTACK + g_base_irqstack */
 
     addi    sp, sp, -(76+76)
     sd      t0, (4+4)(sp)
@@ -216,6 +252,10 @@ ECC_L1_Handler:
 
     addi    sp, sp, (76+76)
     csrr    sp, mscratch
+
+    ld      t0, (0)(sp)
+    ld      t1, (8)(sp)
+    addi    sp, sp, 16
     mret
 #endif
 
@@ -290,8 +330,22 @@ Sirq_Handler:
     .weak   Mirq_Handler
     .type   Mirq_Handler, %function
 Mirq_Handler:
+    addi    sp, sp, -16
+    sd      t0, (0)(sp)
+    sd      t1, (8)(sp)
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -8
+    sd      s0, (sp)
+#endif
     csrw    mscratch, sp
-    la      sp, g_top_irqstack
+
+    csrr    t0, mhartid
+    la      sp, g_base_irqstack
+    addi    t1, t0, 1
+    li      t0, CONFIG_ARCH_INTERRUPTSTACK
+    mul     t1, t1, t0
+    add     sp, sp, t1 /* sp = (cpuid + 1) * CONFIG_ARCH_INTERRUPTSTACK + g_base_irqstack */
+
     addi    sp, sp, -(76+76)
     sd      t0, (4+4)(sp)
     sd      t1, (8+8)(sp)
@@ -349,6 +403,14 @@ _interrupt_return_address:
 
     addi    sp, sp, (76+76)
     csrr    sp, mscratch
+
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    ld      s0, (sp)
+    addi    sp, sp, 8
+#endif
+    ld      t0, (0)(sp)
+    ld      t1, (8)(sp)
+    addi    sp, sp, 16
     mret
 
 

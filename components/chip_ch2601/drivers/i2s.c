@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include <stdio.h>
 #include <string.h>
@@ -203,6 +217,8 @@ I2S_CODE_IN_RAM void wj_i2s_dma_event_cb(csi_dma_ch_t *dma, csi_dma_event_t even
             uint32_t read_len = i2s->tx_period;
 
             if (i2s->tx_buf->data_len < i2s->tx_period) {
+                /* FIXME: play white noise on data empty */
+                memset((void*)(i2s->tx_buf->buffer + i2s->tx_buf->read), 0, i2s->tx_period);
                 if (i2s->callback) {
                     i2s->callback(i2s, I2S_EVENT_TX_BUFFER_EMPTY, i2s->arg);
                 }
@@ -224,6 +240,7 @@ I2S_CODE_IN_RAM void wj_i2s_dma_event_cb(csi_dma_ch_t *dma, csi_dma_event_t even
                 wj_i2s_transmit_data((wj_i2s_regs_t *)i2s->dev.reg_base, TX_FIFO[tx_num]);
             }
 
+            soc_dcache_clean_invalid_range((unsigned long)(i2s->tx_buf->buffer + i2s->tx_buf->read + (tx_num << 2U)), i2s->tx_period - (tx_num << 2U));
             csi_dma_ch_start(i2s->tx_dma, i2s->tx_buf->buffer + i2s->tx_buf->read  + (tx_num << 2), (void *) & (i2s_base->I2S_DR), i2s->tx_period - (tx_num << 2));
 
             if (i2s->callback) {

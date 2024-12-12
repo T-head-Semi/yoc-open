@@ -4,6 +4,9 @@
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
 /* Target processor is big endian. */
 #define CPU_IS_BIG_ENDIAN 0
 
@@ -245,3 +248,4 @@
 
 /* Define to __typeof__ if your compiler spells it that way. */
 /* #undef typeof */
+#endif

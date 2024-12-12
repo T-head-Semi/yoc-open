@@ -43,6 +43,9 @@ public:
     int ReleaseTensor(Tensor_t *tensor);
 
 private:
+    int ProfilingProperties(const uint64_t channelId, const char *properties);
+
+private:
     int mDev;
     struct csinn_session *mSess;
     const Tensor_t *mOutput;

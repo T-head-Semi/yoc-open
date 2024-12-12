@@ -83,7 +83,7 @@ else
 IS_SECURE=non_security
 endif
 
-ifeq ($(CONFIG_CPU_E802)$(CONFIG_CPU_S802)$(CONFIG_CPU_E802T)$(CONFIG_CPU_S802T)$(CONFIG_CPU_CK802), y)
+ifeq ($(CONFIG_CPU_XUANTIE_E802)$(CONFIG_CPU_S802)$(CONFIG_CPU_XUANTIE_E802T)$(CONFIG_CPU_S802T)$(CONFIG_CPU_XUANTIE_E802), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/802/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/802/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/802/dump_backtrace.c
@@ -91,7 +91,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/802/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/802/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_E803)$(CONFIG_CPU_S803)$(CONFIG_CPU_E803T)$(CONFIG_CPU_S803T)$(CONFIG_CPU_CK803), y)
+ifeq ($(CONFIG_CPU_XUANTIE_E803)$(CONFIG_CPU_S803)$(CONFIG_CPU_XUANTIE_E803T)$(CONFIG_CPU_S803T)$(CONFIG_CPU_XUANTIE_E803), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803/dump_backtrace.c
@@ -99,7 +99,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/803/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_E804D)$(CONFIG_CPU_E804DT)$(CONFIG_CPU_CK803ER1)$(CONFIG_CPU_CK803ER2)$(CONFIG_CPU_CK803ER3), y)
+ifeq ($(CONFIG_CPU_XUANTIE_E804D)$(CONFIG_CPU_XUANTIE_E804DT)$(CONFIG_CPU_XUANTIE_E803ER1)$(CONFIG_CPU_XUANTIE_E803ER2)$(CONFIG_CPU_XUANTIE_E803ER3), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804d/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804d/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804d/dump_backtrace.c
@@ -107,7 +107,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/804d/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804d/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_E804F)$(CONFIG_CPU_E804FT)$(CONFIG_CPU_CK803F), y)
+ifeq ($(CONFIG_CPU_XUANTIE_E804F)$(CONFIG_CPU_XUANTIE_E804FT)$(CONFIG_CPU_XUANTIE_E803F), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804f/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804f/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804f/dump_backtrace.c
@@ -115,7 +115,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/804f/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804f/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_CK803EF), y)
+ifeq ($(CONFIG_CPU_XUANTIE_E803EF), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803ef_32gpr/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803ef_32gpr/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803ef_32gpr/dump_backtrace.c
@@ -123,7 +123,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/803ef_32gpr/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/803ef_32gpr/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_E804DF)$(CONFIG_CPU_E804DFT)$(CONFIG_CPU_CK804EF)$(CONFIG_CPU_CK803EFR1)$(CONFIG_CPU_CK803EFR2)$(CONFIG_CPU_CK803EFR3), y)
+ifeq ($(CONFIG_CPU_XUANTIE_E804DF)$(CONFIG_CPU_XUANTIE_E804DFT)$(CONFIG_CPU_XUANTIE_E804EF)$(CONFIG_CPU_XUANTIE_E803EFR1)$(CONFIG_CPU_XUANTIE_E803EFR2)$(CONFIG_CPU_XUANTIE_E803EFR3), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804df/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804df/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804df/dump_backtrace.c
@@ -131,7 +131,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/804df/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/804df/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_I805)$(CONFIG_CPU_I805F)$(CONFIG_CPU_CK805)$(CONFIG_CPU_CK805F), y)
+ifeq ($(CONFIG_CPU_XUANTIE_I805)$(CONFIG_CPU_XUANTIE_I805F)$(CONFIG_CPU_XUANTIE_E805)$(CONFIG_CPU_XUANTIE_E805F), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/805/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/805/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/805/dump_backtrace.c
@@ -139,7 +139,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/805/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/805/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_C807)$(CONFIG_CPU_R807), y)
+ifeq ($(CONFIG_CPU_XUANTIE_C807)$(CONFIG_CPU_XUANTIE_R807), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807/dump_backtrace.c
@@ -147,7 +147,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/807/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_C807F)$(CONFIG_CPU_C807FV)$(CONFIG_CPU_R807F), y)
+ifeq ($(CONFIG_CPU_XUANTIE_C807F)$(CONFIG_CPU_XUANTIE_C807FV)$(CONFIG_CPU_XUANTIE_R807F), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807f/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807f/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807f/dump_backtrace.c
@@ -155,7 +155,7 @@ KERNEL_SSRC += $(KERNELDIR)/rhino/arch/csky/807f/$(IS_TSPEND)/port_s.S
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/807f/$(IS_SECURE)/port_c.c
 endif
 
-ifeq ($(CONFIG_CPU_C810)$(CONFIG_CPU_C810V)$(CONFIG_CPU_C810T)$(CONFIG_CPU_C810TV), y)
+ifeq ($(CONFIG_CPU_XUANTIE_C810)$(CONFIG_CPU_XUANTIE_C810V)$(CONFIG_CPU_XUANTIE_C810T)$(CONFIG_CPU_XUANTIE_C810TV), y)
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/810/cpu_impl.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/810/csky_sched.c
 KERNEL_CSRC += $(KERNELDIR)/rhino/arch/csky/810/dump_backtrace.c

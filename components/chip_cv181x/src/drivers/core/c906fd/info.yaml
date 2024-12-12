@@ -1,7 +1,7 @@
 name: c906fd
-vendor: thead
+vendor: xuantie
 license: Copyright (C) 2017-2019 Alibaba Group Holding Limited
-description: thead c906fd cpu
+description: xuantie c906fd cpu
 type: core
 
 versions:

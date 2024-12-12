@@ -1,6 +1,6 @@
 ## 第一部分： 基础信息
 name: mesh_provisioner_demo
-version: v7.9.1
+version: v8.0.0
 description: YoC MESH Provisioner Demo
 type: solution
 ## 第二部分：依赖信息
@@ -10,24 +10,24 @@ type: solution
 #   - minilibc: v7.2.0
 #   - aos: >=v7.2.0
 sdk_chip:
-  - sdk_chip_d1: v7.9.1
+  - sdk_chip_d1: v8.0.0
 mkflash_script: mkflash.sh
 depends:
-  - sdk_chip_d1: v7.9.1
-  - ble_mesh: v7.9.1
-  - gateway_mgmt: v7.9.1
-  - tsl_engine: v7.9.1
-  - httpclient: v7.9.1
-  - ers: v7.9.1
-  - ota_module: v7.9.1
-  - cjson: v7.9.1
-  - duktape: v7.9.1
-  - smartliving: v7.9.1
-  - mbedtls: v7.9.1
-  - vfs: v7.9.1
-  - transport: v7.9.1
-  - at: v7.9.1
-  - wifi_provisioning: v7.9.1
+  - sdk_chip_d1: v8.0.0
+  - ble_mesh: v8.0.0
+  - gateway_mgmt: v8.0.0
+  - tsl_engine: v8.0.0
+  - httpclient: v8.0.0
+  - ers: v8.0.0
+  - ota_module: v8.0.0
+  - cjson: v8.0.0
+  - duktape: v8.0.0
+  - smartliving: v8.0.0
+  - mbedtls: v8.0.0
+  - vfs: v8.0.0
+  - transport: v8.0.0
+  - at: v8.0.0
+  - wifi_provisioning: v8.0.0
 #  - button: v7.4.7
 #  - dut_service: v7.4.4
 ## 第三部分：板级信息

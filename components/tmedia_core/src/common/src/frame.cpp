@@ -25,6 +25,7 @@ TMFrame::TMFrame():
     mBuffer = NULL;
     mPlatformPriv = NULL;
     mReleaseFunc = NULL;
+    mUsrPtr = NULL;
 }
 
 TMFrame::TMFrame(const TMFrame& frame)
@@ -382,6 +383,7 @@ void TMVideoFrame::Init()
     }
 
     mDataType = TMData::Type::FRAME_VIDEO;
+    mForceIdr = false;
 }
 
 void TMVideoFrame::Init(TMClockType_e type, uint32_t time_base)
@@ -734,7 +736,13 @@ int TMVideoFrame::PrepareBuffer(TMBuffer *buffer, int addrAlign, int strideAlign
 
 TMAudioFrame::TMAudioFrame()
 {
-
+    mSampleRate = 0;
+    mSampleCount = 0;
+    mSampleBits = AUDIO_SAMPLE_BITS_UNKNOW;
+    mSampleChannels = AUDIO_SAMPLE_CHANNE_UNKNOW;
+    mPcmDataType = AUDIO_PCM_ACCESS_RW_UNKNOW;
+    mPlatformPriv = NULL;
+    mDataType = TMData::Type::FRAME_AUDIO;
 }
 
 TMAudioFrame::~TMAudioFrame()
@@ -745,23 +753,11 @@ TMAudioFrame::~TMAudioFrame()
 void TMAudioFrame::Init()
 {
     TMFrame::Init();
-
-    mSampleBits = AUDIO_SAMPLE_BITS_UNKNOW;
-    mSampleChannels = AUDIO_SAMPLE_CHANNE_UNKNOW;
-    mPcmDataType = AUDIO_PCM_ACCESS_RW_UNKNOW;
-    mSampleCount = 0;
-    mDataType = TMData::Type::FRAME_AUDIO;
 }
 
 void TMAudioFrame::Init(TMClockType_e type, uint32_t time_base)
 {
     TMFrame::Init(type, time_base);
-
-    mSampleBits = AUDIO_SAMPLE_BITS_UNKNOW;
-    mSampleChannels = AUDIO_SAMPLE_CHANNE_UNKNOW;
-    mPcmDataType = AUDIO_PCM_ACCESS_RW_UNKNOW;
-    mSampleCount = 0;
-    mDataType = TMData::Type::FRAME_AUDIO;
 }
 
 int TMAudioFrame::CopyProperty(const TMFrame *frame)

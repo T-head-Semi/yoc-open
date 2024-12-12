@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2018-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #if defined(CONFIG_DECODER_PVMP3) && CONFIG_DECODER_PVMP3
@@ -17,6 +31,35 @@ struct ad_pvmp3_priv {
     tPVMP3DecoderExternal    config;
 };
 
+#if CONFIG_PVMP3DEC_MEM_STATIC_ALLOC
+static int _ad_pvmp3_open(ad_cls_t *o)
+{
+    void *dbuf = NULL, *obuf = NULL;
+    tPVMP3DecoderExternal *config;
+    struct ad_pvmp3_priv *priv = NULL;
+
+    priv = av_zalloc(sizeof(struct ad_pvmp3_priv));
+    config = &priv->config;
+    dbuf   = (void*)g_pvmp3dec_mem;
+    obuf   = av_malloc(PVMP3DEC_OBUF_SIZE);
+    CHECK_RET_TAG_WITH_GOTO(obuf, err);
+
+    pvmp3_InitDecoder(config, dbuf);
+    config->crcEnabled    = false;
+    config->equalizerType = flat;
+    config->pOutputBuffer = obuf;
+
+    priv->obuf = obuf;
+    priv->dbuf = dbuf;
+    o->priv    = priv;
+    return 0;
+
+err:
+    av_free(obuf);
+    av_free(priv);
+    return -1;
+}
+#else
 static int _ad_pvmp3_open(ad_cls_t *o)
 {
     uint32_t msize;
@@ -47,6 +90,7 @@ err:
     av_free(priv);
     return -1;
 }
+#endif
 
 static int _ad_pvmp3_decode(ad_cls_t *o, avframe_t *frame, int *got_frame, const avpacket_t *pkt)
 {
@@ -115,7 +159,9 @@ static int _ad_pvmp3_close(ad_cls_t *o)
     struct ad_pvmp3_priv *priv = o->priv;
 
     av_free(priv->obuf);
+#if !CONFIG_PVMP3DEC_MEM_STATIC_ALLOC
     av_free(priv->dbuf);
+#endif
     av_free(priv);
     o->priv = NULL;
 

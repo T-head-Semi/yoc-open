@@ -8,6 +8,9 @@
 #include <tmedia_core/bind/pad.h>
 #include <tmedia_core/bind/pipeline.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
 using namespace std;
 class TMPipeline;
 
@@ -107,6 +110,9 @@ public:
     int PushEventToPipeline(TMEvent *event);
 
     friend class TMPipeline;
+
+protected:
+    virtual int ProfilingProperties(const uint64_t channelId, const char *properties) {return TMResult::TM_NOT_IMPLEMENTED;}
 
 protected:
     virtual int CreatePads()  = 0;

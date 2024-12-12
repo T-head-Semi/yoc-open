@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <csi_config.h>
@@ -28,7 +42,7 @@ static void cache_init(void)
 
 static void section_init(void)
 {
-#ifdef CONFIG_XIP
+#if CONFIG_XIP
     section_data_copy();
     section_ram_code_copy();
     csi_dcache_clean();
@@ -82,8 +96,8 @@ void SystemInit(void)
     __set_MSTATUS(status);
 #endif
      /* enable mexstatus SPUSHEN and disable SPSWAPEN */
-#if CONFIG_CPU_E906 || CONFIG_CPU_E906F || CONFIG_CPU_E906FD || CONFIG_CPU_E906P || CONFIG_CPU_E906FP || CONFIG_CPU_E906FDP \
-    || CONFIG_CPU_E907 || CONFIG_CPU_E907F || CONFIG_CPU_E907FD || CONFIG_CPU_E907P || CONFIG_CPU_E907FP || CONFIG_CPU_E907FDP
+#if CONFIG_CPU_XUANTIE_E906 || CONFIG_CPU_XUANTIE_E906F || CONFIG_CPU_XUANTIE_E906FD || CONFIG_CPU_XUANTIE_E906P || CONFIG_CPU_XUANTIE_E906FP || CONFIG_CPU_XUANTIE_E906FDP \
+    || CONFIG_CPU_XUANTIE_E907 || CONFIG_CPU_XUANTIE_E907F || CONFIG_CPU_XUANTIE_E907FD || CONFIG_CPU_XUANTIE_E907P || CONFIG_CPU_XUANTIE_E907FP || CONFIG_CPU_XUANTIE_E907FDP
     status = __get_MEXSTATUS();
     status |= (0x1 << 16);
     status &= ~(0x2 << 16);

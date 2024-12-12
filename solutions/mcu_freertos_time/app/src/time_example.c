@@ -38,6 +38,7 @@ void example_main()
     delay_19s_time = xTaskGetTickCount() * FREERTOS_SYSTICK;
     printf("now time = %llu ms after 19s, will be delay  1s....\n", delay_19s_time);
     vTaskDelay(pdMS_TO_TICKS(1000));
+    __DSB();
     cur_time = xTaskGetTickCount() * FREERTOS_SYSTICK;
     printf("now time = %llu ms after delay 1s \n", cur_time);
     if ((delay_19s_time - expect_time) < 0 || (cur_time - delay_19s_time - delay_1s_time) < 0) {

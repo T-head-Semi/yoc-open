@@ -23,7 +23,11 @@ public:
         FRAME_AUDIO,
     };
 
-    TMData() {}
+    TMData()
+    {
+        mDataType = Type::UNKNOWN;
+        mSeqNum = 0;
+    }
     virtual ~TMData() {}
     virtual int UnRef() {return TMResult::TM_OK;}   // TODO: make it to be pure virtual function
 

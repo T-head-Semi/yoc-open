@@ -1,6 +1,6 @@
 ## 第一部分： 基础信息
 name: breeze
-version: v7.9.1
+version: v8.0.0
 description: 生活物联平台蓝牙协议框架
 type: common
 tag: 通用组件
@@ -39,7 +39,8 @@ build_config:
     - include
   internal_include:
     - hal/ble/include/mbedtls
-  cflag: '-w'
+  # fix components error for new toolchain
+  cflag: -w -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -Wno-stringop-overread -Wno-array-parameter -Wno-maybe-uninitialized
   cxxflag: ""
   asmflag: ""
   define:

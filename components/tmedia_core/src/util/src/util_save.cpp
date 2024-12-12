@@ -94,6 +94,7 @@ int TMUtilSave::Picture(TMVideoFrame &frame, const char *filename, bool append)
         break;
     case TMImageInfo::PixelFormat::PIXEL_FORMAT_RGB888P:
     case TMImageInfo::PixelFormat::PIXEL_FORMAT_BGR888P:
+    case TMImageInfo::PixelFormat::PIXEL_FORMAT_YUV444P:
         plane_height[0] = frame.mHeight;
         plane_height[1] = frame.mHeight;
         plane_height[2] = frame.mHeight;

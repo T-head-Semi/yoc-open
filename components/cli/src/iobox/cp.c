@@ -129,6 +129,15 @@ static int cp_dir_to_dir(const char *from, const char *to)
 
     while ((entry = readdir(pdir))) {
         char *fpath = get_path(from, entry->d_name);
+        if (isdir(fpath)) {
+            if (memcmp(entry->d_name, ".", 1) != 0 && memcmp(entry->d_name, "..", 2) != 0) {
+                ret = cp_dir_to_dir(fpath, to_dir);
+                if (ret) {
+                    aos_cli_printf("cp_dir_to_dir failed, from:%s, to:%s\n", fpath, to_dir);
+                }
+            }
+            continue;
+        }
 
         ret = cp_file_to_dir(fpath, to_dir);
         free(fpath);

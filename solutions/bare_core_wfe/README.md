@@ -1,6 +1,10 @@
 # 概述
 
-`bare_core_wfe` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁exx cpu低功耗唤醒wfe功能使用示例。
+`bare_core_wfe` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁处理器低功耗(wfi)的使用方式(通过NMI中断唤醒)。
+
+示例程序中运行所依赖的bit将TIMER4作为NMI中断的触发源。代码中首先初始化TIMER4并设为3s后触发中断，然后关闭所有的中断后并执行wfi指令进入低功耗，最后等待3s后NMI中断触发唤醒CPU。
+
+注意：该示例当前仅支持在玄铁Exx处理器上编译运行
 
 # 基于Linux编译运行
 

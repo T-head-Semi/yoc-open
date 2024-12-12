@@ -7,6 +7,13 @@ using namespace std;
 
 TMTsMuxerSeno::TMTsMuxerSeno()
 {
+    mVideoMux = NULL;
+    mVideoFrame = NULL;
+    mAudioMux = NULL;
+    mAudioFrame = NULL;
+    mRingBufferPtr = NULL;
+    mSendAble = false;
+    mRecvAble = false;
 }
 
 TMTsMuxerSeno::~TMTsMuxerSeno()

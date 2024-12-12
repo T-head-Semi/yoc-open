@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2019-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include <errno.h>
 #include <string.h>
@@ -596,91 +610,6 @@ int aos_sem_is_valid(aos_sem_t *sem)
 }
 
 #endif
-
-#if (RHINO_CONFIG_TASK_SEM > 0)
-
-int aos_task_sem_new(aos_task_t *task, aos_sem_t *sem, const char *name, int count)
-{
-    kstat_t ret;
-
-    CHECK_HANDLE(task);
-    aos_check_return_einval(sem);
-
-    *sem = aos_malloc(sizeof(ksem_t));
-
-    if (*sem == NULL) {
-        return -ENOMEM;
-    }
-    if (name == NULL) {
-        ret = krhino_task_sem_create((ktask_t *)(*task), (ksem_t *)*sem, "AOS", count);
-    } else {
-        ret = krhino_task_sem_create((ktask_t *)(*task), (ksem_t *)*sem, name, count);
-    }
-
-    if (ret != RHINO_SUCCESS) {
-        aos_free(*sem);
-        *sem = NULL;
-    }
-    return rhino2stderrno(ret);
-}
-
-int aos_task_sem_free(aos_task_t *task)
-{
-    kstat_t ret;
-    ktask_t *ktask;
-
-    CHECK_HANDLE(task);
-
-    ktask = (ktask_t *)(*task);
-    ret = krhino_task_sem_del(ktask);
-    if (ret == RHINO_SUCCESS) {
-        aos_free(ktask->task_sem_obj);
-    }
-    return rhino2stderrno(ret);
-}
-
-void aos_task_sem_signal(aos_task_t *task)
-{
-    aos_check_return(task && *task);
-
-    krhino_task_sem_give((ktask_t *)(*task));
-}
-
-int aos_task_sem_wait(unsigned int timeout)
-{
-    kstat_t ret;
-
-    if (timeout == AOS_WAIT_FOREVER) {
-        ret = krhino_task_sem_take(RHINO_WAIT_FOREVER);
-    } else {
-        ret = krhino_task_sem_take(MS2TICK(timeout));
-    }
-
-    return rhino2stderrno(ret);
-}
-
-int aos_task_sem_count_set(aos_task_t *task, int count)
-{
-    kstat_t ret;
-
-    CHECK_HANDLE(task);
-
-    ret = krhino_task_sem_count_set((ktask_t *)(*task), count);
-    return rhino2stderrno(ret);
-}
-
-int aos_task_sem_count_get(aos_task_t *task, int *count)
-{
-    kstat_t ret;
-
-    CHECK_HANDLE(task);
-    aos_check_return_einval(count);
-
-    ret = krhino_task_sem_count_get((ktask_t *)(*task), (sem_count_t *)count);
-    return rhino2stderrno(ret);
-}
-
-#endif /* RHINO_CONFIG_TASK_SEM */
 
 #if (RHINO_CONFIG_EVENT_FLAG > 0)
 

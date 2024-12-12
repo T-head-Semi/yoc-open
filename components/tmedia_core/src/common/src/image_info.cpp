@@ -129,6 +129,15 @@ int TMImageInfo::getPlaneInfo(TMImageInfo::PixelFormat pixelFormat,
         ySize = IMAGE_ALIGN(mainStride * alignHeight, addrAlign);
         mainSize = ySize;
     }
+    else if (pixelFormat == TMImageInfo::PixelFormat::PIXEL_FORMAT_YUV444P)   ///< planar YUV 4:4:4
+    {
+        planeNum = 3;
+
+        cStride = mainStride;
+        cSize = ySize;
+
+        mainSize = ySize + (cSize << 1);
+    }
     else if (pixelFormat == TMImageInfo::PixelFormat::PIXEL_FORMAT_RGB888 ||   ///< packed RGB 8:8:8, 24bpp, RGBRGB...
              pixelFormat == TMImageInfo::PixelFormat::PIXEL_FORMAT_BGR888)   ///< packed BGR 8:8:8, 24bpp, BGRBGR...
     {
@@ -319,6 +328,15 @@ int TMImageInfo::getPlaneInfo(TMImageInfo::PixelFormat pixelFormat,
         ySize = mainStride * alignHeight;
         mainSize = ySize;
     }
+    else if (pixelFormat == TMImageInfo::PixelFormat::PIXEL_FORMAT_YUV444P)   ///< planar YUV 4:4:4
+    {
+        planeNum = 3;
+
+        cStride = mainStride;
+        cSize = ySize;
+
+        mainSize = ySize + (cSize << 1);
+    }
     else if (pixelFormat == TMImageInfo::PixelFormat::PIXEL_FORMAT_RGB888P ||   ///< planar RGB 8:8:8
              pixelFormat == TMImageInfo::PixelFormat::PIXEL_FORMAT_BGR888P)   ///< planar BGR 8:8:8
     {
@@ -449,6 +467,8 @@ const string TMImageInfo::Name(TMImageInfo::PixelFormat pixelFmt)
         return "PIXEL_FORMAT_JPEG";
     case TMImageInfo::PixelFormat::PIXEL_FORMAT_BINARY:
         return "PIXEL_FORMAT_BINARY";
+    case TMImageInfo::PixelFormat::PIXEL_FORMAT_YUV444P:
+        return "PIXEL_FORMAT_YUV444P";
     default:
         return "UNKNOWN";
     }

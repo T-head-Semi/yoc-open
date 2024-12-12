@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <csi_core.h>
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdef.h>
@@ -37,6 +38,7 @@ void example_main()
     delay_19s_time = rt_tick_get() * RT_SYSTICK;
     printf("now time = %llu ms after 19s, will be delay  1s....\n", delay_19s_time);
     rt_thread_mdelay(1000);
+    __DSB();
     cur_time = rt_tick_get() * RT_SYSTICK;
     printf("now time = %llu ms after delay 1s \n", cur_time);
     if ((delay_19s_time - expect_time) < 0 || (cur_time - delay_19s_time - delay_1s_time) < 0) {

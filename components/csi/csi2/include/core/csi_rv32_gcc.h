@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2019 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -13,52 +27,12 @@
 #ifndef _CSI_RV32_GCC_H_
 #define _CSI_RV32_GCC_H_
 
-#include <stdlib.h>
+#include <core/csi_rv_common.h>
 
-#ifndef __ASM
-#define __ASM                   __asm     /*!< asm keyword for GNU Compiler */
-#endif
-
-#ifndef __INLINE
-#define __INLINE                inline    /*!< inline keyword for GNU Compiler */
-#endif
-
-#ifndef __ALWAYS_STATIC_INLINE
-#define __ALWAYS_STATIC_INLINE  __attribute__((always_inline)) static inline
-#endif
-
-#ifndef __STATIC_INLINE
-#define __STATIC_INLINE         static inline
-#endif
-
-#ifndef __NO_RETURN
-#define __NO_RETURN             __attribute__((__noreturn__))
-#endif
-
-#ifndef __USED
-#define __USED                  __attribute__((used))
-#endif
-
-#ifndef __WEAK
-#define __WEAK                  __attribute__((weak))
-#endif
-
-#ifndef __PACKED
-#define __PACKED                __attribute__((packed, aligned(1)))
-#endif
-
-#ifndef __PACKED_STRUCT
-#define __PACKED_STRUCT         struct __attribute__((packed, aligned(1)))
-#endif
-
-#ifndef __PACKED_UNION
-#define __PACKED_UNION          union __attribute__((packed, aligned(1)))
-#endif
-
-#if CONFIG_CPU_E906 || CONFIG_CPU_E906F || CONFIG_CPU_E906FD || CONFIG_CPU_E906P || CONFIG_CPU_E906FP || CONFIG_CPU_E906FDP \
-    || CONFIG_CPU_E907 || CONFIG_CPU_E907F || CONFIG_CPU_E907FD || CONFIG_CPU_E907P || CONFIG_CPU_E907FP || CONFIG_CPU_E907FDP \
-    || CONFIG_CPU_E902 || CONFIG_CPU_E902M || CONFIG_CPU_E902T || CONFIG_CPU_E902MT
-#define CONFIG_CPU_E9XX    1
+#if CONFIG_CPU_XUANTIE_E906 || CONFIG_CPU_XUANTIE_E906F || CONFIG_CPU_XUANTIE_E906FD || CONFIG_CPU_XUANTIE_E906P || CONFIG_CPU_XUANTIE_E906FP || CONFIG_CPU_XUANTIE_E906FDP \
+    || CONFIG_CPU_XUANTIE_E907 || CONFIG_CPU_XUANTIE_E907F || CONFIG_CPU_XUANTIE_E907FD || CONFIG_CPU_XUANTIE_E907P || CONFIG_CPU_XUANTIE_E907FP || CONFIG_CPU_XUANTIE_E907FDP \
+    || CONFIG_CPU_XUANTIE_E902 || CONFIG_CPU_XUANTIE_E902M || CONFIG_CPU_XUANTIE_E902T || CONFIG_CPU_XUANTIE_E902MT
+#define CONFIG_CPU_XUANTIE_E9XX    1
 #endif
 
 /* ###########################  Core Function Access  ########################### */
@@ -537,7 +511,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MINSTRETH(void)
     return (result);
 }
 
-#if (CONFIG_CPU_E907 || CONFIG_CPU_E907F || CONFIG_CPU_E907FD || CONFIG_CPU_E907P || CONFIG_CPU_E907FP || CONFIG_CPU_E907FDP)
+#if (CONFIG_CPU_XUANTIE_E907 || CONFIG_CPU_XUANTIE_E907F || CONFIG_CPU_XUANTIE_E907FD || CONFIG_CPU_XUANTIE_E907P || CONFIG_CPU_XUANTIE_E907FP || CONFIG_CPU_XUANTIE_E907FDP)
 /**
  \brief   Get MITCMCR
  \details Returns the content of the MITCMCR Register.

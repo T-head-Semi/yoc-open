@@ -55,7 +55,7 @@ BL606P-DVK专为用于评估音视频应用诞生，适用于智能面板、智�
 试用示例之前请先使用以下命令进行下载:
 
 ```bash
-git clone git@github.com:XUANTIE-RV/open-yoc.git -b v7.9.1
+git clone git@github.com:XUANTIE-RV/open-yoc.git -b v8.0.0
 ```
 
 或者从GITEE下载：
@@ -63,7 +63,7 @@ git clone git@github.com:XUANTIE-RV/open-yoc.git -b v7.9.1
 mkdir yocworkspace
 cd yocworkspace
 yoc init
-yoc install yoc -b v7.9.1
+yoc install yoc -b v8.0.0
 ```
 
 然后到`solutions`目录下，所有的示例都在那里，用户可以根据每个示例下的`README.md`文件进行操作。
@@ -154,6 +154,19 @@ yoc install yoc -b v7.9.1
 YoC系统完全开源，代码版本遵循Apache License 2.0开源许可协议，可以免费在商业产品中使用，并且不需要公开私有代码。
 
 ## Release Note
+
+### 2024.12.07 (v8.0.0)
+1. littlefs文件系统增加对多分区的支持
+2. 修复使用玄铁GCC14工具链编译的一些警告问题
+
+| **<font style="color:rgb(64, 72, 91);">开发工具</font>**<font style="color:rgb(38, 38, 38);">   </font> | **<font style="color:rgb(64, 72, 91);">版本</font>**<font style="color:rgb(38, 38, 38);">   </font> | **<font style="color:rgb(64, 72, 91);">说明</font>**<font style="color:rgb(38, 38, 38);">   </font> |
+| --- | --- | --- |
+| [CDK](https://www.xrvm.cn/community/download?id=4384380604863549440)<font style="color:rgb(38, 38, 38);">   </font> | <font style="color:rgb(64, 72, 91);">>=</font><font style="color:rgb(0, 0, 0);">V2.24.4</font><font style="color:rgb(38, 38, 38);">   </font> | <font style="color:rgb(64, 72, 91);">面向基于RISC-V的MCU/AIoT领域的极简开发环境，帮助开发者从工程获取到配置、开发、下载、调试全链路的图形界面的支持。</font> |
+| [CDS](https://www.xrvm.cn/community/download?id=4384384677859889152) | <font style="color:rgb(64, 72, 91);">>=</font><font style="color:rgb(0, 0, 0);">V5.2.20</font> | <font style="color:rgb(64, 72, 91);">面向基于玄铁CPU的集成开发环境，支持Bare metal、RTOS、Linux等各类程序的开发。</font> |
+| [QEMU](https://www.xrvm.cn/community/download?id=4382612884035801088) | <font style="color:rgb(64, 72, 91);">>=</font><font style="color:rgb(0, 0, 0);">V5.0.4</font> | <font style="color:rgb(64, 72, 91);">玄铁QEMU是一个以开源项目QEMU为基础，支持玄铁处理器的软件模拟器，提供了带基本外设的玄铁开发板模板。</font> |
+| [XuanTie Debug Server](https://www.xrvm.cn/community/download?id=4380347564587814912) | <font style="color:rgb(64, 72, 91);">>=</font><font style="color:rgb(0, 0, 0);">V5.18.3</font> | <font style="color:rgb(64, 72, 91);">XuanTie DebugServer是一个调试代理软件，它通过CKLINK，以JTAG的方式连接目标板，并支持“GDB Remote Protocol” 。开发者可以通过GDB对运行在玄铁800系列和玄铁900系列处理器上的软件程序进行在线调试。</font> |
+| yoctools | <font style="color:rgb(64, 72, 91);">>=2.0.95</font> | <font style="color:rgb(64, 72, 91);">Linux下命令行构建编译工具</font> |
+| [玄铁工具链](https://www.xrvm.cn/community/download?id=4382928864901402624) | <font style="color:rgb(64, 72, 91);">>=</font><font style="color:rgb(0, 0, 0);">V3.0.1</font> | <font style="color:rgb(64, 72, 91);">riscv编译所需工具链，可以自行下载安装，并在系统变量中设置对应的路径信息</font> |
 
 ### 2023.6.21 (v7.9.1)
 #### 新增特性

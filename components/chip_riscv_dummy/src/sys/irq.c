@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdint.h>
@@ -92,7 +106,7 @@ bool csi_irq_context(void)
 #endif
 }
 
-#if CONFIG_CPU_E9XX
+#if CONFIG_CPU_XUANTIE_E9XX
 static volatile int g_nmi_cnt;
 __attribute__((weak)) void handle_nmi_exception(void)
 {
@@ -121,7 +135,7 @@ void CORET_IRQHandler(void)
     g_irq_nested_level--;
 #endif
 }
-#endif
+#endif /* CONFIG_CPU_XUANTIE_E9XX */
 
 #if CONFIG_ECC_L1_ENABLE || CONFIG_ECC_L2_ENABLE
 static struct {
@@ -129,7 +143,7 @@ static struct {
     int err_cnt_l2;
 } g_ecc_stat;
 
-void ecc_l1_irqhandler(void *arg)
+void __attribute__((weak)) ecc_l1_irqhandler(void *arg)
 {
     g_ecc_stat.err_cnt_l1++;
 
@@ -147,7 +161,7 @@ void ecc_l1_irqhandler(void *arg)
     }
 }
 
-void ecc_l2_irqhandler(void *arg)
+void __attribute__((weak)) ecc_l2_irqhandler(void *arg)
 {
     g_ecc_stat.err_cnt_l2++;
 
@@ -215,13 +229,12 @@ void do_irq(void)
     } else {
         Default_Handler();
     }
+    /* clear irq for cxx */
+    soc_irq_end(irqn);
     CSI_INTRPT_EXIT();
 #if defined(CONFIG_SMP) && CONFIG_SMP
     g_irq_nested_level[csi_get_cpu_id()]--;
 #else
     g_irq_nested_level--;
 #endif
-
-    /* clear irq for cxx */
-    soc_irq_end(irqn);
 }

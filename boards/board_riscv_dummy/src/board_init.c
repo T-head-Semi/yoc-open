@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2019-2022 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdlib.h>
@@ -186,44 +200,44 @@ static void c9xx_csr_copy(void)
 {
     if (PRIMARY_STARTUP_CORE_ID == csi_get_cpu_id()) {
         /* Load from boot core */
-        c9xx_regs.pmpaddr0 = csr_read(CSR_PMPADDR0);
-        c9xx_regs.pmpaddr1 = csr_read(CSR_PMPADDR1);
-        c9xx_regs.pmpaddr2 = csr_read(CSR_PMPADDR2);
-        c9xx_regs.pmpaddr3 = csr_read(CSR_PMPADDR3);
-        c9xx_regs.pmpaddr4 = csr_read(CSR_PMPADDR4);
-        c9xx_regs.pmpaddr5 = csr_read(CSR_PMPADDR5);
-        c9xx_regs.pmpaddr6 = csr_read(CSR_PMPADDR6);
-        c9xx_regs.pmpaddr7 = csr_read(CSR_PMPADDR7);
-        c9xx_regs.pmpcfg0  = csr_read(CSR_PMPCFG0);
-        c9xx_regs.mcor     = csr_read(CSR_MCOR);
-        c9xx_regs.msmpr    = csr_read(CSR_MSMPR);
-        c9xx_regs.mhcr     = csr_read(CSR_MHCR);
-        c9xx_regs.mccr2    = csr_read(CSR_MCCR2);
-        c9xx_regs.mhint    = csr_read(CSR_MHINT);
-        c9xx_regs.mtvec    = csr_read(CSR_MTVEC);
-        c9xx_regs.mie      = csr_read(CSR_MIE);
-        c9xx_regs.mxstatus = csr_read(CSR_MXSTATUS);
+        c9xx_regs.pmpaddr0 = rv_csr_read(CSR_PMPADDR0);
+        c9xx_regs.pmpaddr1 = rv_csr_read(CSR_PMPADDR1);
+        c9xx_regs.pmpaddr2 = rv_csr_read(CSR_PMPADDR2);
+        c9xx_regs.pmpaddr3 = rv_csr_read(CSR_PMPADDR3);
+        c9xx_regs.pmpaddr4 = rv_csr_read(CSR_PMPADDR4);
+        c9xx_regs.pmpaddr5 = rv_csr_read(CSR_PMPADDR5);
+        c9xx_regs.pmpaddr6 = rv_csr_read(CSR_PMPADDR6);
+        c9xx_regs.pmpaddr7 = rv_csr_read(CSR_PMPADDR7);
+        c9xx_regs.pmpcfg0  = rv_csr_read(CSR_PMPCFG0);
+        c9xx_regs.mcor     = rv_csr_read(CSR_MCOR);
+        c9xx_regs.msmpr    = rv_csr_read(CSR_MSMPR);
+        c9xx_regs.mhcr     = rv_csr_read(CSR_MHCR);
+        c9xx_regs.mccr2    = rv_csr_read(CSR_MCCR2);
+        c9xx_regs.mhint    = rv_csr_read(CSR_MHINT);
+        c9xx_regs.mtvec    = rv_csr_read(CSR_MTVEC);
+        c9xx_regs.mie      = rv_csr_read(CSR_MIE);
+        c9xx_regs.mxstatus = rv_csr_read(CSR_MXSTATUS);
 
-        c9xx_regs.plic_base_addr = csr_read(CSR_PLIC_BASE);
+        c9xx_regs.plic_base_addr = rv_csr_read(CSR_PLIC_BASE);
         c9xx_regs.clint_base_addr = c9xx_regs.plic_base_addr + C9xx_PLIC_CLINT_OFFSET;
     } else {
         /* Store to other core */
-        // csr_write(CSR_PMPADDR0, c9xx_regs.pmpaddr0);
-        // csr_write(CSR_PMPADDR1, c9xx_regs.pmpaddr1);
-        // csr_write(CSR_PMPADDR2, c9xx_regs.pmpaddr2);
-        // csr_write(CSR_PMPADDR3, c9xx_regs.pmpaddr3);
-        // csr_write(CSR_PMPADDR4, c9xx_regs.pmpaddr4);
-        // csr_write(CSR_PMPADDR5, c9xx_regs.pmpaddr5);
-        // csr_write(CSR_PMPADDR6, c9xx_regs.pmpaddr6);
-        // csr_write(CSR_PMPADDR7, c9xx_regs.pmpaddr7);
-        // csr_write(CSR_PMPCFG0,  c9xx_regs.pmpcfg0);
-        csr_write(CSR_MCOR,     c9xx_regs.mcor);
-        csr_write(CSR_MSMPR,    c9xx_regs.msmpr);
-        csr_write(CSR_MHCR,     c9xx_regs.mhcr);
-        csr_write(CSR_MHINT,    c9xx_regs.mhint);
-        // csr_write(CSR_MTVEC,    c9xx_regs.mtvec);
-        // csr_write(CSR_MIE,      c9xx_regs.mie);
-        csr_write(CSR_MXSTATUS, c9xx_regs.mxstatus);
+        // rv_csr_write(CSR_PMPADDR0, c9xx_regs.pmpaddr0);
+        // rv_csr_write(CSR_PMPADDR1, c9xx_regs.pmpaddr1);
+        // rv_csr_write(CSR_PMPADDR2, c9xx_regs.pmpaddr2);
+        // rv_csr_write(CSR_PMPADDR3, c9xx_regs.pmpaddr3);
+        // rv_csr_write(CSR_PMPADDR4, c9xx_regs.pmpaddr4);
+        // rv_csr_write(CSR_PMPADDR5, c9xx_regs.pmpaddr5);
+        // rv_csr_write(CSR_PMPADDR6, c9xx_regs.pmpaddr6);
+        // rv_csr_write(CSR_PMPADDR7, c9xx_regs.pmpaddr7);
+        // rv_csr_write(CSR_PMPCFG0,  c9xx_regs.pmpcfg0);
+        rv_csr_write(CSR_MCOR,     c9xx_regs.mcor);
+        rv_csr_write(CSR_MSMPR,    c9xx_regs.msmpr);
+        rv_csr_write(CSR_MHCR,     c9xx_regs.mhcr);
+        rv_csr_write(CSR_MHINT,    c9xx_regs.mhint);
+        // rv_csr_write(CSR_MTVEC,    c9xx_regs.mtvec);
+        // rv_csr_write(CSR_MIE,      c9xx_regs.mie);
+        rv_csr_write(CSR_MXSTATUS, c9xx_regs.mxstatus);
     }
 }
 

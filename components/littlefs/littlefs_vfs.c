@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2019-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <vfs.h>
@@ -7,6 +21,7 @@
 #include <vfs_file.h>
 #include <vfs_register.h>
 #include <yoc/partition.h>
+#include <aos/list.h>
 
 #include "lfs.h"
 #include "littlefs_vfs.h"
@@ -20,8 +35,12 @@
 
 typedef aos_mutex_t lfs_lock_t;
 
+static lfs_lock_t g_lfs_vfs_lock = NULL;
 typedef struct {
-    struct lfs_config *config;
+    slist_t           node;
+    partition_t       lfs_hdl;
+    char              *lfs_mount_path;
+    struct lfs_config config;
     lfs_t             *lfs;
     lfs_lock_t        *lock;
 } lfs_manager_t;
@@ -33,29 +52,42 @@ typedef struct _lfsvfs_dir_t
     vfs_dirent_t cur_dirent;
 } lfsvfs_dir_t;
 
-partition_t lfs_hdl;
-static char *lfs_mount_path;
-static lfs_manager_t g_lfs_manager = {0};
+static slist_t lfs_node_list = {NULL};
+
+static void lfs_vfs_find_object(vfs_file_t *fp, lfs_manager_t** lfs_manager)
+{
+    lfs_manager_t* lfs_node = NULL;
+
+    if (fp == NULL || lfs_manager == NULL) {
+        return;
+    }
+    *lfs_manager = NULL;
+    slist_for_each_entry(&lfs_node_list, lfs_node, lfs_manager_t, node) {
+        if (!strncmp(lfs_node->lfs_mount_path, fp->node->i_name, strlen(lfs_node->lfs_mount_path))) {
+            *lfs_manager = lfs_node;
+            return;
+        }
+    }
+}
 
 static int32_t littlefs_block_read(const struct lfs_config *cfg, lfs_block_t block,
                              lfs_off_t off, void *dst, lfs_size_t size)
 {
     uint32_t off_set = off + cfg->block_size * block;
-    return partition_read(lfs_hdl, off_set, dst, size);
+    return partition_read((partition_t)(uintptr_t)cfg->context, off_set, dst, size);
 }
 
 static int32_t littlefs_block_write(const struct lfs_config *cfg, lfs_block_t block,
                               lfs_off_t off, const void *dst, lfs_size_t size)
 {
     uint32_t off_set = off + cfg->block_size * block;
-    return partition_write(lfs_hdl, off_set, (void *)dst, size);
+    return partition_write((partition_t)(uintptr_t)cfg->context, off_set, (void *)dst, size);
 }
 
 static int32_t littlefs_block_erase(const struct lfs_config *cfg, lfs_block_t block)
 {
     uint32_t off_set = cfg->block_size * block;
-
-    return partition_erase_size(lfs_hdl, off_set, cfg->block_size);
+    return partition_erase_size((partition_t)(uintptr_t)cfg->context, off_set, cfg->block_size);
 }
 
 static int32_t littlefs_block_sync(const struct lfs_config *cfg)
@@ -63,13 +95,6 @@ static int32_t littlefs_block_sync(const struct lfs_config *cfg)
     return 0;
 }
 
-struct lfs_config default_cfg = {
-    // block device operations
-    .read  = littlefs_block_read,
-    .prog  = littlefs_block_write,
-    .erase = littlefs_block_erase,
-    .sync  = littlefs_block_sync,
-};
 
 /* Global FS lock init */
 static void lfs_lock_create(lfs_lock_t *lock)
@@ -102,8 +127,13 @@ static void lfs_unlock(lfs_lock_t *lock)
     }
 }
 
+static int lfs_lock_is_valid(lfs_lock_t *lock)
+{
+    return lock && *lock != NULL;
+}
+
 /* Relative path convert */
-static char *path_convert(const char *path)
+static char *path_convert(lfs_manager_t* lfs_manager, const char *path)
 {
     int32_t len, prefix;
     char *target_path, *p;
@@ -113,8 +143,8 @@ static char *path_convert(const char *path)
     }
 
     len = strlen(path);
-    prefix = strlen(lfs_mount_path);
-    if (strncmp(lfs_mount_path, path, prefix) != 0) {
+    prefix = strlen(lfs_manager->lfs_mount_path);
+    if (strncmp(lfs_manager->lfs_mount_path, path, prefix) != 0) {
         return NULL;
     }
 
@@ -126,7 +156,7 @@ static char *path_convert(const char *path)
 
     memset(target_path, 0, len + 1);
     if (len > 0) {
-        if (strcmp(lfs_mount_path, "/") == 0) {
+        if (strcmp(lfs_manager->lfs_mount_path, "/") == 0) {
             p = (char *)(path + prefix);
             memcpy(target_path, p, len);
         } else {
@@ -197,41 +227,38 @@ static int lfs_ret_value_convert(int lfs_ret)
     return ret;
 }
 
-static int32_t _lfs_deinit(void)
+static int32_t _lfs_deinit(lfs_manager_t* lfs_manager)
 {
-    if (g_lfs_manager.lfs != NULL) {
-        aos_free(g_lfs_manager.lfs);
+    if (lfs_manager->lfs != NULL) {
+        aos_free(lfs_manager->lfs);
     }
 
-    if (g_lfs_manager.lock != NULL) {
-        lfs_lock_destory(g_lfs_manager.lock);
-        aos_free(g_lfs_manager.lock);
+    if (lfs_manager->lock != NULL) {
+        lfs_lock_destory(lfs_manager->lock);
+        aos_free(lfs_manager->lock);
     }
     return 0;
 }
 
-static int32_t _lfs_init(void)
+static int32_t _lfs_init(lfs_manager_t* lfs_manager)
 {
-    /* Set LFS default config */
-    g_lfs_manager.config = &default_cfg;
-
     /* Create LFS Global Lock */
-    g_lfs_manager.lock = (lfs_lock_t *)aos_malloc(sizeof(lfs_lock_t));
-    if (g_lfs_manager.lock == NULL) {
+    lfs_manager->lock = (lfs_lock_t *)aos_malloc(sizeof(lfs_lock_t));
+    if (lfs_manager->lock == NULL) {
         goto ERROR;
     }
-    lfs_lock_create(g_lfs_manager.lock);
+    lfs_lock_create(lfs_manager->lock);
 
     /* Create LFS struct */
-    g_lfs_manager.lfs = (lfs_t *)aos_malloc(sizeof(lfs_t));
-    if (g_lfs_manager.lfs == NULL) {
+    lfs_manager->lfs = (lfs_t *)aos_malloc(sizeof(lfs_t));
+    if (lfs_manager->lfs == NULL) {
         goto ERROR;
     }
 
     return 0;
 
 ERROR:
-    _lfs_deinit();
+    _lfs_deinit(lfs_manager);
     return -1;
 }
 
@@ -241,7 +268,12 @@ static int lfs_vfs_open(vfs_file_t *fp, const char *path, int flags)
     char *target_path = NULL;
     lfs_file_t *file = NULL;
 
-    target_path = path_convert(path);
+    lfs_manager_t *lfs_manager = NULL;
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+    target_path = path_convert(lfs_manager, path);
     if (target_path == NULL) {
         return -EINVAL;
     }
@@ -256,9 +288,9 @@ static int lfs_vfs_open(vfs_file_t *fp, const char *path, int flags)
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    res = lfs_file_open(g_lfs_manager.lfs, file,  target_path, mode_convert(flags));
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    res = lfs_file_open(lfs_manager->lfs, file,  target_path, mode_convert(flags));
+    lfs_unlock(lfs_manager->lock);
 
     if (res != LFS_ERR_OK) {
         aos_free(target_path);
@@ -278,9 +310,16 @@ static int lfs_vfs_close(vfs_file_t *fp)
     int res = LFS_ERR_INVAL;
     lfs_file_t *file = (lfs_file_t *)(fp->f_arg);
 
-    lfs_lock(g_lfs_manager.lock);
-    res = lfs_file_close(g_lfs_manager.lfs, file);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_manager_t *lfs_manager = NULL;
+
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    res = lfs_file_close(lfs_manager->lfs, file);
+    lfs_unlock(lfs_manager->lock);
 
     if (res == LFS_ERR_OK) {
         aos_free(file);
@@ -292,12 +331,17 @@ static int lfs_vfs_close(vfs_file_t *fp)
 static ssize_t lfs_vfs_read(vfs_file_t *fp, char *buf, size_t len)
 {
     int nbytes;
-
     lfs_file_t *file = (lfs_file_t *)(fp->f_arg);
+    lfs_manager_t *lfs_manager = NULL;
 
-    lfs_lock(g_lfs_manager.lock);
-    nbytes = lfs_file_read(g_lfs_manager.lfs, file, buf, len);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    nbytes = lfs_file_read(lfs_manager->lfs, file, buf, len);
+    lfs_unlock(lfs_manager->lock);
 
     return nbytes;
 }
@@ -305,12 +349,16 @@ static ssize_t lfs_vfs_read(vfs_file_t *fp, char *buf, size_t len)
 static ssize_t lfs_vfs_write(vfs_file_t *fp, const char *buf, size_t len)
 {
     int nbytes;
-
     lfs_file_t *file = (lfs_file_t *)(fp->f_arg);
+    lfs_manager_t *lfs_manager = NULL;
 
-    lfs_lock(g_lfs_manager.lock);
-    nbytes = lfs_file_write(g_lfs_manager.lfs, file, buf, len);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+    lfs_lock(lfs_manager->lock);
+    nbytes = lfs_file_write(lfs_manager->lfs, file, buf, len);
+    lfs_unlock(lfs_manager->lock);
 
     return nbytes;
 }
@@ -318,12 +366,17 @@ static ssize_t lfs_vfs_write(vfs_file_t *fp, const char *buf, size_t len)
 static off_t lfs_vfs_lseek(vfs_file_t *fp, off_t off, int whence)
 {
     off_t res;
-
     lfs_file_t *file = (lfs_file_t *)(fp->f_arg);
+    lfs_manager_t *lfs_manager = NULL;
 
-    lfs_lock(g_lfs_manager.lock);
-    res = lfs_file_seek(g_lfs_manager.lfs, file, off, whence);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    res = lfs_file_seek(lfs_manager->lfs, file, off, whence);
+    lfs_unlock(lfs_manager->lock);
 
     return res;
 }
@@ -331,26 +384,37 @@ static off_t lfs_vfs_lseek(vfs_file_t *fp, off_t off, int whence)
 static int lfs_vfs_sync(vfs_file_t *fp)
 {
     int res;
-
     lfs_file_t *file = (lfs_file_t *)(fp->f_arg);
+    lfs_manager_t *lfs_manager = NULL;
 
-    lfs_lock(g_lfs_manager.lock);
-    res = lfs_file_sync(g_lfs_manager.lfs, file);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    res = lfs_file_sync(lfs_manager->lfs, file);
+    lfs_unlock(lfs_manager->lock);
 
     return res;
 }
 
 static int lfs_vfs_fstat(vfs_file_t *fp, vfs_stat_t *st)
 {
-    struct lfs_info s;
     int32_t ret;
-
+    struct lfs_info s;
     lfs_file_t *file = (lfs_file_t*)(fp->f_arg);
+    lfs_manager_t *lfs_manager = NULL;
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_fstat(g_lfs_manager.lfs, file, &s);
-    lfs_unlock(g_lfs_manager.lock);
+    memset(&s, 0, sizeof(struct lfs_info));
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_fstat(lfs_manager->lfs, file, &s);
+    lfs_unlock(lfs_manager->lock);
 
     ret = lfs_ret_value_convert(ret);
     if (ret == 0){
@@ -368,18 +432,26 @@ static int lfs_vfs_fstat(vfs_file_t *fp, vfs_stat_t *st)
 
 static int lfs_vfs_stat(vfs_file_t *fp, const char *path, vfs_stat_t *st)
 {
-    struct lfs_info s;
     int res;
+    struct lfs_info s;
     char *target_path = NULL;
 
-    target_path = path_convert(path);
+    lfs_manager_t *lfs_manager = NULL;
+
+    memset(&s, 0, sizeof(struct lfs_info));
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    target_path = path_convert(lfs_manager, path);
     if (target_path == NULL) {
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    res = lfs_stat(g_lfs_manager.lfs, target_path, &s);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    res = lfs_stat(lfs_manager->lfs, target_path, &s);
+    lfs_unlock(lfs_manager->lock);
 
     if (res == LFS_ERR_OK) {
         st->st_size = s.size;
@@ -412,20 +484,26 @@ static int lfs_vfs_access(vfs_file_t *fp, const char *path, int mode)
 
 static int lfs_vfs_statfs(vfs_file_t *fp, const char *path, vfs_statfs_t *sfs)
 {
-    int32_t block_used;
     int ret;
+    int32_t block_used;
+    lfs_manager_t *lfs_manager = NULL;
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_fs_size(g_lfs_manager.lfs);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_fs_size(lfs_manager->lfs);
+    lfs_unlock(lfs_manager->lock);
     ret = lfs_ret_value_convert(ret);
     if (ret >= 0) {
         block_used = ret;
         memset(sfs, 0, sizeof(vfs_statfs_t));
         sfs->f_type = 0xd3fc;
-        sfs->f_bsize = g_lfs_manager.config->block_size;
-        sfs->f_blocks = g_lfs_manager.config->block_count;
-        sfs->f_bfree = g_lfs_manager.config->block_count - block_used;
+        sfs->f_bsize = lfs_manager->config.block_size;
+        sfs->f_blocks = lfs_manager->config.block_count;
+        sfs->f_bfree = lfs_manager->config.block_count - block_used;
         sfs->f_bavail = sfs->f_bfree;
         sfs->f_files = 1024;
         ret = 0;
@@ -438,15 +516,21 @@ static int lfs_vfs_remove(vfs_file_t *fp, const char *path)
 {
     int res;
     char *target_path = NULL;
+    lfs_manager_t *lfs_manager = NULL;
 
-    target_path = path_convert(path);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    target_path = path_convert(lfs_manager, path);
     if (target_path == NULL) {
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    res = lfs_remove(g_lfs_manager.lfs, target_path);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    res = lfs_remove(lfs_manager->lfs, target_path);
+    lfs_unlock(lfs_manager->lock);
 
     aos_free(target_path);
     return res;
@@ -455,24 +539,29 @@ static int lfs_vfs_remove(vfs_file_t *fp, const char *path)
 static int lfs_vfs_rename(vfs_file_t *fp, const char *oldpath, const char *newpath)
 {
     int32_t ret;
-
     char *oldname = NULL;
     char *newname = NULL;
+    lfs_manager_t *lfs_manager = NULL;
 
-    oldname = path_convert(oldpath);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    oldname = path_convert(lfs_manager, oldpath);
     if (!oldname) {
         return -EINVAL;
     }
 
-    newname = path_convert(newpath);
+    newname = path_convert(lfs_manager, newpath);
     if (!newname) {
         aos_free(oldname);
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_rename(g_lfs_manager.lfs, oldname, newname);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_rename(lfs_manager->lfs, oldname, newname);
+    lfs_unlock(lfs_manager->lock);
 
     aos_free(oldname);
     aos_free(newname);
@@ -482,11 +571,17 @@ static int lfs_vfs_rename(vfs_file_t *fp, const char *oldpath, const char *newpa
 
 static vfs_dir_t *lfs_vfs_opendir(vfs_file_t *fp, const char *path)
 {
-    lfsvfs_dir_t *lfsvfs_dir = NULL;
-    char *relpath = NULL;
     int32_t ret;
+    char *relpath = NULL;
+    lfsvfs_dir_t *lfsvfs_dir = NULL;
+    lfs_manager_t *lfs_manager = NULL;
 
-    relpath = path_convert(path);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return NULL;
+    }
+
+    relpath = path_convert(lfs_manager, path);
     if (!relpath) {
         return NULL;
     }
@@ -499,9 +594,9 @@ static vfs_dir_t *lfs_vfs_opendir(vfs_file_t *fp, const char *path)
 
     memset(lfsvfs_dir, 0, sizeof(lfsvfs_dir_t) + LFS_NAME_MAX + 1);
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_dir_open(g_lfs_manager.lfs, &lfsvfs_dir->lfsdir, relpath);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_dir_open(lfs_manager->lfs, &lfsvfs_dir->lfsdir, relpath);
+    lfs_unlock(lfs_manager->lock);
 
     if (ret != LFS_ERR_OK) {
         aos_free(relpath);
@@ -523,9 +618,16 @@ static vfs_dirent_t *lfs_vfs_readdir(vfs_file_t *fp, vfs_dir_t *dir)
         return NULL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_dir_read(g_lfs_manager.lfs, &lfsvfs_dir->lfsdir, &info);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_manager_t *lfs_manager = NULL;
+    memset(&info, 0, sizeof(struct lfs_info));
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return NULL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_dir_read(lfs_manager->lfs, &lfsvfs_dir->lfsdir, &info);
+    lfs_unlock(lfs_manager->lock);
 
     if (ret != true) {
         return NULL;
@@ -552,9 +654,15 @@ static int lfs_vfs_closedir(vfs_file_t *fp, vfs_dir_t *dir)
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_dir_close(g_lfs_manager.lfs, &lfsvfs_dir->lfsdir);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_manager_t *lfs_manager = NULL;
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_dir_close(lfs_manager->lfs, &lfsvfs_dir->lfsdir);
+    lfs_unlock(lfs_manager->lock);
     if (ret != 0) {
         return ret;
     }
@@ -569,14 +677,20 @@ static int lfs_vfs_mkdir(vfs_file_t *fp, const char *path)
     int32_t ret;
     char *pathname = NULL;
 
-    pathname = path_convert(path);
+    lfs_manager_t *lfs_manager = NULL;
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    pathname = path_convert(lfs_manager, path);
     if (!pathname) {
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_mkdir(g_lfs_manager.lfs, pathname);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_mkdir(lfs_manager->lfs, pathname);
+    lfs_unlock(lfs_manager->lock);
 
     aos_free(pathname);
 
@@ -588,14 +702,20 @@ static int lfs_vfs_rmdir (vfs_file_t *fp, const char *path)
     int32_t ret;
     char *pathname = NULL;
 
-    pathname = path_convert(path);
+    lfs_manager_t *lfs_manager = NULL;
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    pathname = path_convert(lfs_manager, path);
     if (!pathname) {
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_remove(g_lfs_manager.lfs, pathname);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_remove(lfs_manager->lfs, pathname);
+    lfs_unlock(lfs_manager->lock);
 
     aos_free(pathname);
 
@@ -604,15 +724,21 @@ static int lfs_vfs_rmdir (vfs_file_t *fp, const char *path)
 
 static void lfs_vfs_rewinddir(vfs_file_t *fp, vfs_dir_t *dir)
 {
+    lfs_manager_t *lfs_manager = NULL;
     lfsvfs_dir_t *lfsvfs_dir = (lfsvfs_dir_t *)dir;
 
     if (!lfsvfs_dir) {
         return;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    lfs_dir_rewind(g_lfs_manager.lfs, &lfsvfs_dir->lfsdir);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    lfs_dir_rewind(lfs_manager->lfs, &lfsvfs_dir->lfsdir);
+    lfs_unlock(lfs_manager->lock);
 }
 
 static long lfs_vfs_telldir(vfs_file_t *fp, vfs_dir_t *dir)
@@ -624,24 +750,36 @@ static long lfs_vfs_telldir(vfs_file_t *fp, vfs_dir_t *dir)
         return -EINVAL;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_dir_tell(g_lfs_manager.lfs, &lfsvfs_dir->lfsdir);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_manager_t *lfs_manager = NULL;
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_dir_tell(lfs_manager->lfs, &lfsvfs_dir->lfsdir);
+    lfs_unlock(lfs_manager->lock);
 
     return lfs_ret_value_convert(ret);
 }
 
 static void lfs_vfs_seekdir(vfs_file_t *fp, vfs_dir_t *dir, long loc)
 {
+    lfs_manager_t *lfs_manager = NULL;
     lfsvfs_dir_t *lfsvfs_dir = (lfsvfs_dir_t*)dir;
 
     if (!lfsvfs_dir) {
         return;
     }
 
-    lfs_lock(g_lfs_manager.lock);
-    lfs_dir_seek(g_lfs_manager.lfs, &lfsvfs_dir->lfsdir, (lfs_off_t)loc);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    lfs_dir_seek(lfs_manager->lfs, &lfsvfs_dir->lfsdir, (lfs_off_t)loc);
+    lfs_unlock(lfs_manager->lock);
 }
 
 static int lfs_vfs_utime(vfs_file_t *fp, const char *path, const vfs_utimbuf_t *times)
@@ -655,9 +793,15 @@ static int lfs_vfs_truncate(vfs_file_t *fp, off_t size)
 
     lfs_file_t *file = (lfs_file_t *)(fp->f_arg);
 
-    lfs_lock(g_lfs_manager.lock);
-    ret = lfs_file_truncate(g_lfs_manager.lfs, file, size);
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_manager_t *lfs_manager = NULL;
+    lfs_vfs_find_object(fp, &lfs_manager);
+    if (!lfs_manager) {
+        return -EINVAL;
+    }
+
+    lfs_lock(lfs_manager->lock);
+    ret = lfs_file_truncate(lfs_manager->lfs, file, size);
+    lfs_unlock(lfs_manager->lock);
 
     return lfs_ret_value_convert(ret);
 }
@@ -689,47 +833,47 @@ static const vfs_fs_ops_t littlefs_ops = {
     .truncate   = &lfs_vfs_truncate,
 };
 
-int lfs_vfs_mount(void)
+int lfs_vfs_mount(lfs_manager_t* lfs_manager)
 {
     int res;
 
-    res = _lfs_init();
+    res = _lfs_init(lfs_manager);
     if (res != LFS_ERR_OK) {
         return res;
     }
 
-    lfs_lock(g_lfs_manager.lock);
+    lfs_lock(lfs_manager->lock);
 
-    res = lfs_mount(g_lfs_manager.lfs, g_lfs_manager.config);
+    res = lfs_mount(lfs_manager->lfs, &lfs_manager->config);
 #ifdef LITTLEFS_FORMAT
     if (res != LFS_ERR_OK) {
-        res = lfs_format(g_lfs_manager.lfs, g_lfs_manager.config);
+        res = lfs_format(lfs_manager->lfs, &lfs_manager->config);
         if (res != LFS_ERR_OK) {
             goto ERROR;
         }
 
-        res = lfs_mount(g_lfs_manager.lfs, g_lfs_manager.config);
+        res = lfs_mount(lfs_manager->lfs, &lfs_manager->config);
         if (res != LFS_ERR_OK) {
             goto ERROR;
         }
     }
 #endif
 
-    lfs_unlock(g_lfs_manager.lock);
+    lfs_unlock(lfs_manager->lock);
     return res;
 
 #ifdef LITTLEFS_FORMAT
 ERROR:
-    lfs_unlock(g_lfs_manager.lock);
-    _lfs_deinit();
+    lfs_unlock(lfs_manager->lock);
+    _lfs_deinit(lfs_manager);
     return res;
 #endif
 }
 
-int lfs_vfs_unmount(void)
+static int lfs_vfs_unmount(lfs_manager_t* lfs_manager)
 {
-    lfs_unmount(g_lfs_manager.lfs);
-    _lfs_deinit();
+    lfs_unmount(lfs_manager->lfs);
+    _lfs_deinit(lfs_manager);
     return LFS_ERR_OK;
 }
 
@@ -738,79 +882,157 @@ int32_t vfs_lfs_register(char *partition_desc)
     return vfs_lfs_register_with_path(partition_desc, (const char *)LFS_MOUNTPOINT);
 }
 
+static void lfs_set_config(lfs_manager_t *lfs_manager, char *partition_desc)
+{
+    if (lfs_manager == NULL || partition_desc == NULL) {
+        return;
+    }
+
+    partition_t lfs_hdl = partition_open(partition_desc);
+    aos_check(lfs_hdl > 0, EIO);
+
+    lfs_manager->lfs_hdl = lfs_hdl;
+    // block device configuration
+    partition_info_t *part_info = partition_info_get(lfs_hdl);
+
+    lfs_manager->config.context  = (void*)(uintptr_t)lfs_manager->lfs_hdl;
+    lfs_manager->config.read     = littlefs_block_read;
+    lfs_manager->config.prog     = littlefs_block_write;
+    lfs_manager->config.erase    = littlefs_block_erase;
+    lfs_manager->config.sync     = littlefs_block_sync;
+
+#ifdef CONFIG_LFS_BLOCK_SIZE
+    lfs_manager->config.block_size     = LFS_BLOCK_SIZE;
+#else
+    lfs_manager->config.block_size     = part_info->sector_size;
+#endif
+#ifdef CONFIG_LFS_BLOCK_COUNT
+    lfs_manager->config.block_count    = LFS_BLOCK_COUNT;
+#else
+    lfs_manager->config.block_count    = part_info->length / part_info->sector_size;
+#endif
+#ifdef CONFIG_LFS_READ_SIZE
+    lfs_manager->config.read_size      = LFS_READ_SIZE;
+#else
+    lfs_manager->config.read_size      = 256;
+#endif
+#ifdef CONFIG_LFS_PROG_SIZE
+    lfs_manager->config.prog_size      = LFS_PROG_SIZE;
+#else
+    lfs_manager->config.prog_size      = 256;
+#endif
+#ifdef CONFIG_LFS_CACHE_SIZE
+    lfs_manager->config.cache_size     = LFS_CACHE_SIZE;
+#else
+    lfs_manager->config.cache_size     = lfs_manager->config.prog_size;
+#endif
+#ifdef CONFIG_LFS_LOOKAHEAD_SIZE
+    lfs_manager->config.lookahead_size = LFS_LOOKAHEAD_SIZE;
+#else
+    lfs_manager->config.lookahead_size = GET_LOOKAHEAD_SIZE(lfs_manager->config.block_count);
+#endif
+#ifdef CONFIG_LFS_BLOCK_CYCLES
+    lfs_manager->config.block_cycles   = LFS_BLOCK_CYCLES;
+#else
+    lfs_manager->config.block_cycles   = 1000;
+#endif
+
+    // printf("lfs_manager->config.block_size: %d\n", lfs_manager->config.block_size);
+    // printf("lfs_manager->config.block_count: %d\n", lfs_manager->config.block_count);
+    // printf("lfs_manager->config.read_size: %d\n", lfs_manager->config.read_size);
+    // printf("lfs_manager->config.prog_size: %d\n", lfs_manager->config.prog_size);
+    // printf("lfs_manager->config.cache_size: %d\n", lfs_manager->config.cache_size);
+    // printf("lfs_manager->config.lookahead_size: %d\n", lfs_manager->config.lookahead_size);
+    // printf("lfs_manager->config.block_cycles: %d\n", lfs_manager->config.block_cycles);
+}
+
 int32_t vfs_lfs_register_with_path(char *partition_desc, const char *path)
 {
+    int res;
+
     if (partition_desc == NULL || path == NULL) {
         return -EINVAL;
     }
-    lfs_mount_path = strdup(path);
+    char* lfs_mount_path = strdup(path);
     if (lfs_mount_path == NULL) {
         return -ENOMEM;
     }
-    lfs_hdl = partition_open(partition_desc);
-    aos_check(lfs_hdl > 0, EIO);
 
-    // block device configuration
-    partition_info_t *part_info = partition_info_get(lfs_hdl);
-#ifdef CONFIG_LFS_BLOCK_SIZE
-    default_cfg.block_size     = LFS_BLOCK_SIZE;
-#else
-    default_cfg.block_size     = part_info->sector_size;
-#endif
-#ifdef CONFIG_LFS_BLOCK_COUNT
-    default_cfg.block_count    = LFS_BLOCK_COUNT;
-#else
-    default_cfg.block_count    = part_info->length / part_info->sector_size;
-#endif
-#ifdef CONFIG_LFS_READ_SIZE
-    default_cfg.read_size      = LFS_READ_SIZE;
-#else
-    default_cfg.read_size      = 256;
-#endif
-#ifdef CONFIG_LFS_PROG_SIZE
-    default_cfg.prog_size      = LFS_PROG_SIZE;
-#else
-    default_cfg.prog_size      = 256;
-#endif
-#ifdef CONFIG_LFS_CACHE_SIZE
-    default_cfg.cache_size     = LFS_CACHE_SIZE;
-#else
-    default_cfg.cache_size     = default_cfg.prog_size;
-#endif
-#ifdef CONFIG_LFS_LOOKAHEAD_SIZE
-    default_cfg.lookahead_size = LFS_LOOKAHEAD_SIZE;
-#else
-    default_cfg.lookahead_size = GET_LOOKAHEAD_SIZE(default_cfg.block_count);
-#endif
-#ifdef CONFIG_LFS_BLOCK_CYCLES
-    default_cfg.block_cycles   = LFS_BLOCK_CYCLES;
-#else
-    default_cfg.block_cycles   = 1000;
-#endif
-
-    // printf("default_cfg.block_size: %d\n", default_cfg.block_size);
-    // printf("default_cfg.block_count: %d\n", default_cfg.block_count);
-    // printf("default_cfg.read_size: %d\n", default_cfg.read_size);
-    // printf("default_cfg.prog_size: %d\n", default_cfg.prog_size);
-    // printf("default_cfg.cache_size: %d\n", default_cfg.cache_size);
-    // printf("default_cfg.lookahead_size: %d\n", default_cfg.lookahead_size);
-    // printf("default_cfg.block_cycles: %d\n", default_cfg.block_cycles);
-
-    int res = lfs_vfs_mount();
-    if (res == LFS_ERR_OK) {
-        return vfs_register_fs(lfs_mount_path, &littlefs_ops, NULL);
+    lfs_manager_t *lfs_manager= aos_zalloc(sizeof(lfs_manager_t));
+    if (!lfs_manager) {
+        free(lfs_mount_path);
+        return -ENOMEM;
     }
+
+    lfs_manager->lfs_mount_path = lfs_mount_path;
+    lfs_set_config(lfs_manager, partition_desc);
+
+    res = lfs_vfs_mount(lfs_manager);
+    if (res) {
+        goto failure;
+    }
+    res = vfs_register_fs(lfs_mount_path, &littlefs_ops, NULL);
+    if (res) {
+        goto failure;
+    }
+
+    if (!lfs_lock_is_valid(&g_lfs_vfs_lock)) {
+        lfs_lock_create(&g_lfs_vfs_lock);
+    }
+
+    lfs_lock(&g_lfs_vfs_lock);
+    slist_add(&lfs_manager->node, &lfs_node_list);
+    lfs_unlock(&g_lfs_vfs_lock);
+    return res;
+failure:
+    free(lfs_mount_path);
+    free(lfs_manager);
     return res;
 }
 
 int32_t vfs_lfs_unregister(void)
 {
-    int ret;
+    int ret = -1;
+    lfs_manager_t* lfs_node = NULL;
+    slist_for_each_entry(&lfs_node_list, lfs_node, lfs_manager_t, node) {
+        if (!strcmp(lfs_node->lfs_mount_path, LFS_MOUNTPOINT)) {
+                lfs_vfs_unmount(lfs_node);
+                partition_close(lfs_node->lfs_hdl);
+                ret = vfs_unregister_fs(lfs_node->lfs_mount_path);
+            if (lfs_node->lfs_mount_path)
+                free(lfs_node->lfs_mount_path);
 
-    lfs_vfs_unmount();
-    partition_close(lfs_hdl);
-    ret = vfs_unregister_fs(lfs_mount_path);
-    if (lfs_mount_path)
-        free(lfs_mount_path);
+            if (lfs_lock_is_valid(&g_lfs_vfs_lock)) {
+                lfs_lock(&g_lfs_vfs_lock);
+                slist_remove(&lfs_node_list, &lfs_node->node);
+                lfs_unlock(&g_lfs_vfs_lock);
+            }
+            free(lfs_node);
+            break;
+        }
+    }
+    return ret;
+}
+
+int32_t vfs_lfs_unregister_with_path(const char *path)
+{
+    int ret = -1;
+    lfs_manager_t* lfs_node = NULL;
+    slist_for_each_entry(&lfs_node_list, lfs_node, lfs_manager_t, node) {
+        if (!strcmp(lfs_node->lfs_mount_path, path)) {
+            lfs_vfs_unmount(lfs_node);
+            partition_close(lfs_node->lfs_hdl);
+            ret = vfs_unregister_fs(lfs_node->lfs_mount_path);
+            if (lfs_node->lfs_mount_path)
+                free(lfs_node->lfs_mount_path);
+            if (lfs_lock_is_valid(&g_lfs_vfs_lock)) {
+                lfs_lock(&g_lfs_vfs_lock);
+                slist_remove(&lfs_node_list, &lfs_node->node);
+                lfs_unlock(&g_lfs_vfs_lock);
+            }
+            free(lfs_node);
+            break;
+        }
+    }
     return ret;
 }

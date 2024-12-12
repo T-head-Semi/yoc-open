@@ -4,8 +4,6 @@
 #include <string.h>
 #include <stdint.h>
 
-size_t strcount(const char *haystack, const char *needle);
-
 /**
 * This function used to convert bytes to hexstring
 * @param[out] buf store hexstr
@@ -84,17 +82,6 @@ int strsplit(char **array, size_t count, char *data, const char *delim)
 
     return i;
 }
-
-char **strasplit(char *data, const char *delim, int *count)
-{
-    int i = strcount(data, delim) + 1;
-    char **array = (char **) calloc(sizeof(char*), i);
-    if (array)
-        *count = strsplit(array, i, data, delim);
-
-    return array;
-}
-
 
 int str2mac(const char *str, unsigned char mac[])
 {

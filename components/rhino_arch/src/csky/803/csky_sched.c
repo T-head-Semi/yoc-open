@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#ifdef CONFIG_CPU_CK803EF
+#ifdef CONFIG_CPU_XUANTIE_E803EF
 #include <k_api.h>
 
 #undef  PSR_SP

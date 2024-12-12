@@ -20,6 +20,8 @@ TMUtilTimer::TMUtilTimer(TMTimerHandler timerHandler, uint32_t intervalUSec,
     mUsrArg = usrArg;
     mRunImmediately = runImmediately;
     mTimerID = (timer_t)0;
+    memset(&mInitTime, 0, sizeof(mInitTime));
+    mThreadID = 0;
 }
 
 TMUtilTimer::~TMUtilTimer()

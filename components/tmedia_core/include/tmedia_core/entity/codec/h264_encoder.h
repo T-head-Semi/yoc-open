@@ -60,7 +60,10 @@ public:
         CROP_RECT_W,              // int32_t, 0 ~ Origin picture width.    default -1 means input's width
         CROP_RECT_H,              // int32_t, 0 ~ Origin picture height.   default -1 menas input's height
         ROTATE_ANGLE,             // uint32_t, degree, 0/90/180/270
-    };
+        ALLOW_PIC_SKIP,           // bool, Allow rate control to skip pictures if not enough, default false
+        QP_MIN,                   // int, The minimum QP for any picture. Valid value range: [0, 51], default -1
+        QP_MAX,                   // int, The maximum QP for any picture. Valid value range: [qpMin, 51], default -1
+    }; 
 
     TMH264Encoder()
     {
@@ -83,6 +86,7 @@ public:
     // TMVideoEncoder interface
     virtual int SendFrame(TMVideoFrame &frame, int timeout) = 0;
     virtual int RecvPacket(TMVideoPacket &pkt, int timeout) = 0;
+    virtual int SetRoiArea(EncodeRoiConfig_t *config, int count) { return TMResult::TM_NOT_SUPPORT; }
 
     virtual int GetDefaultBitrate(int width, int height, Profile profile)
     {
@@ -167,6 +171,9 @@ protected:
             pList[i]->Add(TMProperty((int)PropID::CROP_RECT_W,      0,     "crop_w"));
             pList[i]->Add(TMProperty((int)PropID::CROP_RECT_H,      0,     "crop_h"));
             pList[i]->Add(TMProperty((int)PropID::ROTATE_ANGLE,     0,     "rotate_angle"));
+            pList[i]->Add(TMProperty((int)PropID::ALLOW_PIC_SKIP,   false, "allow skip"));
+            pList[i]->Add(TMProperty((int)PropID::QP_MIN, -1, "qp_min"));
+            pList[i]->Add(TMProperty((int)PropID::QP_MAX, -1, "qp_max"));
         }
     }
 };

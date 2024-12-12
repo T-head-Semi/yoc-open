@@ -50,7 +50,7 @@ DLL_HAL_API int HAL_GetModuleID(_OU_ char mid_str[MID_STR_MAXLEN]);
  * @param   device_id : 用来存放DeviceID字符串的数组
  * @return  写到device_id[]数组中的字符长度, 单位是字节(Byte)
  */
-DLL_HAL_API int HAL_GetDeviceID(_OU_ char device_id[DEVICE_ID_LEN]);
+DLL_HAL_API int HAL_GetDeviceID(_OU_ char device_id[DEVICE_ID_MAXLEN]);
 
 /**
  * @brief   获取唯一的芯片ID字符串
@@ -98,7 +98,7 @@ DLL_HAL_API int HAL_SetProductSecret(_IN_ char *product_secret);
  * @param   product_key : 用来存放ProductKey字符串的数组
  * @return  写到product_key[]数组中的字符长度, 单位是字节(Byte)
  */
-DLL_HAL_API int HAL_GetProductKey(_OU_ char product_key[PRODUCT_KEY_LEN]);
+DLL_HAL_API int HAL_GetProductKey(_OU_ char product_key[PRODUCT_KEY_MAXLEN]);
 
 /**
  * @brief   获取设备的`DeviceName`, 用于标识设备单品的名字, 三元组之一
@@ -106,7 +106,7 @@ DLL_HAL_API int HAL_GetProductKey(_OU_ char product_key[PRODUCT_KEY_LEN]);
  * @param   device_name : 用来存放DeviceName字符串的数组
  * @return  写到device_name[]数组中的字符长度, 单位是字节(Byte)
  */
-DLL_HAL_API int HAL_GetDeviceName(_OU_ char device_name[DEVICE_NAME_LEN]);
+DLL_HAL_API int HAL_GetDeviceName(_OU_ char device_name[DEVICE_NAME_MAXLEN]);
 
 /**
  * @brief   获取设备的`DeviceSecret`, 用于标识设备单品的密钥, 三元组之一
@@ -114,7 +114,7 @@ DLL_HAL_API int HAL_GetDeviceName(_OU_ char device_name[DEVICE_NAME_LEN]);
  * @param   device_secret : 用来存放DeviceSecret字符串的数组
  * @return  写到device_secret[]数组中的字符长度, 单位是字节(Byte)
  */
-DLL_HAL_API int HAL_GetDeviceSecret(_OU_ char device_secret[DEVICE_SECRET_LEN]);
+DLL_HAL_API int HAL_GetDeviceSecret(_OU_ char device_secret[DEVICE_SECRET_MAXLEN]);
 
 /**
  * @brief   获取设备的`ProductSecret`, 用于标识设备单品的密钥, 三元组之一

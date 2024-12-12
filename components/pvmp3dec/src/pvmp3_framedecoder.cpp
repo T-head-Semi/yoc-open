@@ -643,7 +643,9 @@ uint32 pvmp3_decoderMemRequirements(void)
     return (size);
 }
 
-
+#if CONFIG_PVMP3DEC_MEM_STATIC_ALLOC
+char g_pvmp3dec_mem[sizeof(tmp3dec_file)];
+#endif
 
 /*----------------------------------------------------------------------------
 ; FUNCTION CODE

@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2019 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -13,115 +27,25 @@
 #ifndef _CSI_RV64_GCC_H_
 #define _CSI_RV64_GCC_H_
 
-#include <stdlib.h>
+#include <core/csi_rv_common.h>
 
-#ifndef __ASM
-#define __ASM                   __asm     /*!< asm keyword for GNU Compiler */
-#endif
-
-#ifndef __INLINE
-#define __INLINE                inline    /*!< inline keyword for GNU Compiler */
-#endif
-
-#ifndef __ALWAYS_STATIC_INLINE
-#define __ALWAYS_STATIC_INLINE  __attribute__((always_inline)) static inline
-#endif
-
-#ifndef __STATIC_INLINE
-#define __STATIC_INLINE         static inline
-#endif
-
-#ifndef __NO_RETURN
-#define __NO_RETURN             __attribute__((__noreturn__))
-#endif
-
-#ifndef __USED
-#define __USED                  __attribute__((used))
-#endif
-
-#ifndef __WEAK
-#define __WEAK                  __attribute__((weak))
-#endif
-
-#ifndef __PACKED
-#define __PACKED                __attribute__((packed, aligned(1)))
-#endif
-
-#ifndef __PACKED_STRUCT
-#define __PACKED_STRUCT         struct __attribute__((packed, aligned(1)))
-#endif
-
-#ifndef __PACKED_UNION
-#define __PACKED_UNION          union __attribute__((packed, aligned(1)))
-#endif
-
-#if CONFIG_CPU_C907 || CONFIG_CPU_C907FD || CONFIG_CPU_C907FDV || CONFIG_CPU_C907FDVM \
-    || CONFIG_CPU_C907_RV32 || CONFIG_CPU_C907FD_RV32 || CONFIG_CPU_C907FDV_RV32 || CONFIG_CPU_C907FDVM_RV32 \
-    || CONFIG_CPU_C908 || CONFIG_CPU_C908V || CONFIG_CPU_C908I \
-    || CONFIG_CPU_C910V2 || CONFIG_CPU_C920V2
+#if CONFIG_CPU_XUANTIE_C907 || CONFIG_CPU_XUANTIE_C907FD || CONFIG_CPU_XUANTIE_C907FDV || CONFIG_CPU_XUANTIE_C907FDVM \
+    || CONFIG_CPU_XUANTIE_C907_RV32 || CONFIG_CPU_XUANTIE_C907FD_RV32 || CONFIG_CPU_XUANTIE_C907FDV_RV32 || CONFIG_CPU_XUANTIE_C907FDVM_RV32 \
+    || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V || CONFIG_CPU_XUANTIE_C908I \
+    || CONFIG_CPU_XUANTIE_C910V2 || CONFIG_CPU_XUANTIE_C910V3 || CONFIG_CPU_XUANTIE_C910V3_CP \
+    || CONFIG_CPU_XUANTIE_C920V2 || CONFIG_CPU_XUANTIE_C920V3 || CONFIG_CPU_XUANTIE_C920V3_CP \
+    || CONFIG_CPU_XUANTIE_R908 || CONFIG_CPU_XUANTIE_R908FD || CONFIG_CPU_XUANTIE_R908FDV \
+    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP
 #define CBO_INSN_SUPPORT 1
 #endif
 
-#ifdef __ASSEMBLY__
-#define __ASM_STR(x)    x
+#if CONFIG_INTC_CLIC_PLIC
+#ifndef CONFIG_PLIC_IRQ_OFFSET
+#define PLIC_IRQ_OFFSET 255U
 #else
-#define __ASM_STR(x)    #x
+#define PLIC_IRQ_OFFSET CONFIG_PLIC_IRQ_OFFSET
 #endif
-
-#ifndef __ASSEMBLY__
-#define csr_read(csr)                                   \
-    ({                                                  \
-        register unsigned long __v;                     \
-        __asm__ __volatile__("csrr %0, " __ASM_STR(csr) \
-                             : "=r"(__v)                \
-                             :                          \
-                             : "memory");               \
-        __v;                                            \
-    })
-
-#define csr_write(csr, val)                                \
-    ({                                                     \
-        unsigned long __v = (unsigned long)(val);          \
-        __asm__ __volatile__("csrw " __ASM_STR(csr) ", %0" \
-                             :                             \
-                             : "rK"(__v)                   \
-                             : "memory");                  \
-    })
-
-#define csr_read_set(csr, val)                                  \
-    ({                                                          \
-        unsigned long __v = (unsigned long)(val);               \
-        __asm__ __volatile__("csrrs %0, " __ASM_STR(csr) ", %1" \
-                             : "=r"(__v) : "rK"(__v)            \
-                             : "memory");                       \
-        __v;                                                    \
-    })
-
-#define csr_set(csr, val)                                  \
-    ({                                                     \
-        unsigned long __v = (unsigned long)(val);          \
-        __asm__ __volatile__("csrs " __ASM_STR(csr) ", %0" \
-                             : : "rK"(__v)                 \
-                             : "memory");                  \
-    })
-
-#define csr_read_clear(csr, val)                                \
-    ({                                                          \
-        unsigned long __v = (unsigned long)(val);               \
-        __asm__ __volatile__("csrrc %0, " __ASM_STR(csr) ", %1" \
-                             : "=r"(__v) : "rK"(__v)            \
-                             : "memory");                       \
-        __v;                                                    \
-    })
-
-#define csr_clear(csr, val)                                \
-    ({                                                     \
-        unsigned long __v = (unsigned long)(val);          \
-        __asm__ __volatile__("csrc " __ASM_STR(csr) ", %0" \
-                             : : "rK"(__v)                 \
-                             : "memory");                  \
-    })
-#endif
+#endif /* CONFIG_INTC_CLIC_PLIC */
 
 /* ###########################  Core Function Access  ########################### */
 /** \ingroup  CSI_Core_FunctionInterface
@@ -732,6 +656,16 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MCYCLE(void)
 }
 
 /**
+  \brief         Set MCYCLE
+  \details       Write MCYCLE Register
+  \param [in]    value  MCYCLE Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MCYCLE(unsigned long value)
+{
+    __ASM volatile("csrw mcycle, %0" : : "r"(value));
+}
+
+/**
   \brief   Get MCYCLEH Register
   \details Returns the content of the MCYCLEH Register.
   \return               MCYCLEH Register value
@@ -742,6 +676,16 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MCYCLEH(void)
 
     __ASM volatile("csrr %0, mcycleh" : "=r"(result));
     return (result);
+}
+
+/**
+  \brief         Set MCYCLEH
+  \details       Write MCYCLEH Register
+  \param [in]    value  MCYCLEH Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MCYCLEH(unsigned long value)
+{
+    __ASM volatile("csrw mcycleh, %0" : : "r"(value));
 }
 
 /**
@@ -758,6 +702,16 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MINSTRET(void)
 }
 
 /**
+  \brief   Set MINSTRET
+  \details Write MINSTRET Register
+  \param [in]    value  MINSTRET Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MINSTRET(unsigned long value)
+{
+    __ASM volatile("csrw minstret, %0" : : "r"(value));
+}
+
+/**
   \brief   Get MINSTRETH Register
   \details Returns the content of the MINSTRETH Register.
   \return               MINSTRETH Register value
@@ -768,6 +722,16 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MINSTRETH(void)
 
     __ASM volatile("csrr %0, minstreth" : "=r"(result));
     return (result);
+}
+
+/**
+  \brief   Set MINSTRETH
+  \details Write MINSTRETH Register
+  \param [in]    value  MINSTRETH Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MINSTRETH(unsigned long value)
+{
+    __ASM volatile("csrw minstreth, %0" : : "r"(value));
 }
 
 /**
@@ -1389,7 +1353,7 @@ __ALWAYS_STATIC_INLINE void __set_MCOUNTERWEN(uint32_t mcounterwen)
  */
 __ALWAYS_STATIC_INLINE void __set_MEDELEG(unsigned long x)
 {
-    asm volatile("csrw medeleg, %0"::"r"(x));
+    __ASM volatile("csrw medeleg, %0"::"r"(x));
 }
 
 /**
@@ -1399,7 +1363,7 @@ __ALWAYS_STATIC_INLINE void __set_MEDELEG(unsigned long x)
 __ALWAYS_STATIC_INLINE unsigned long __get_MEDELEG(void)
 {
     unsigned long x;
-    asm volatile("csrr %0, medeleg":"=r"(x));
+    __ASM volatile("csrr %0, medeleg":"=r"(x));
     return x;
 }
 
@@ -1409,7 +1373,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MEDELEG(void)
  */
 __ALWAYS_STATIC_INLINE void __set_MIDELEG(unsigned long x)
 {
-    asm volatile("csrw mideleg, %0"::"r"(x));
+    __ASM volatile("csrw mideleg, %0"::"r"(x));
 }
 
 /**
@@ -1420,7 +1384,7 @@ __ALWAYS_STATIC_INLINE void __set_MIDELEG(unsigned long x)
 __ALWAYS_STATIC_INLINE unsigned long __get_MIDELEG(void)
 {
     unsigned long x;
-    asm volatile("csrr %0, mideleg":"=r"(x));
+    __ASM volatile("csrr %0, mideleg":"=r"(x));
     return x;
 }
 
@@ -1430,7 +1394,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MIDELEG(void)
  */
 __ALWAYS_STATIC_INLINE void __set_SSTATUS(unsigned long x)
 {
-    asm volatile("csrw sstatus, %0"::"r"(x));
+    __ASM volatile("csrw sstatus, %0"::"r"(x));
 }
 
 /**
@@ -1441,7 +1405,7 @@ __ALWAYS_STATIC_INLINE void __set_SSTATUS(unsigned long x)
 __ALWAYS_STATIC_INLINE unsigned long __get_SSTATUS(void)
 {
     unsigned long x;
-    asm volatile("csrr %0, sstatus":"=r"(x));
+    __ASM volatile("csrr %0, sstatus":"=r"(x));
     return x;
 }
 
@@ -1451,7 +1415,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_SSTATUS(void)
  */
 __ALWAYS_STATIC_INLINE void __set_SXSTATUS(unsigned long x)
 {
-    asm volatile("csrw sxstatus, %0"::"r"(x));
+    __ASM volatile("csrw sxstatus, %0"::"r"(x));
 }
 
 /**
@@ -1462,7 +1426,7 @@ __ALWAYS_STATIC_INLINE void __set_SXSTATUS(unsigned long x)
 __ALWAYS_STATIC_INLINE unsigned long __get__SXSTATUS(void)
 {
     unsigned long x;
-    asm volatile("csrr %0, sxstatus":"=r"(x));
+    __ASM volatile("csrr %0, sxstatus":"=r"(x));
     return x;
 }
 
@@ -1472,7 +1436,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get__SXSTATUS(void)
  */
 __ALWAYS_STATIC_INLINE void __set_SIE(unsigned long x)
 {
-    asm volatile("csrw sie, %0"::"r"(x));
+    __ASM volatile("csrw sie, %0"::"r"(x));
 }
 
 /**
@@ -1483,7 +1447,7 @@ __ALWAYS_STATIC_INLINE void __set_SIE(unsigned long x)
 __ALWAYS_STATIC_INLINE unsigned long __get_SIE(void)
 {
     unsigned long x;
-    asm volatile("csrr %0, sie":"=r"(x));
+    __ASM volatile("csrr %0, sie":"=r"(x));
     return x;
 }
 
@@ -1493,7 +1457,7 @@ __ALWAYS_STATIC_INLINE unsigned long __get_SIE(void)
  */
 __ALWAYS_STATIC_INLINE void __set_STVEC(unsigned long x)
 {
-    asm volatile("csrw stvec, %0"::"r"(x));
+    __ASM volatile("csrw stvec, %0"::"r"(x));
 }
 
 /**
@@ -1504,7 +1468,7 @@ __ALWAYS_STATIC_INLINE void __set_STVEC(unsigned long x)
 __ALWAYS_STATIC_INLINE unsigned long __get_STVEC(void)
 {
     unsigned long x;
-    asm volatile("csrr %0, stvec":"=r"(x));
+    __ASM volatile("csrr %0, stvec":"=r"(x));
     return x;
 }
 
@@ -2241,6 +2205,390 @@ __ALWAYS_STATIC_INLINE unsigned long __get_MDTCMCR(void)
 __ALWAYS_STATIC_INLINE void __set_MDTCMCR(unsigned long dtcmcr)
 {
     __ASM volatile("csrw mdtcmcr, %0" : : "r"(dtcmcr));
+}
+
+/**
+  \brief    Get MFPPCR
+  \details  Read MFPPCR Register.
+  \return   MFPPCR Register value
+ */
+__ALWAYS_STATIC_INLINE unsigned long __get_MFPPCR(void)
+{
+    unsigned long result;
+    __ASM volatile("csrr %0, mfppcr" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief    Set MFPPCR
+  \details  Write MFPPCR Register.
+  \param [in]    fppcr  MFPPCR Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MFPPCR(unsigned long fppcr)
+{
+    __ASM volatile("csrw mfppcr, %0" : : "r"(fppcr));
+}
+
+/**
+  \brief    Set MCOUNTINHIBIT
+  \details  Write MCOUNTINHIBIT Register.
+  \param [in]    value  MCOUNTINHIBIT Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MCOUNTINHIBIT(uint32_t value)
+{
+    __ASM volatile("csrw mcountinhibit, %0" : : "r"(value));
+}
+
+/**
+  \brief    Get MCOUNTINHIBIT
+  \details  Read MCOUNTINHIBIT Register
+  \return   MCOUNTINHIBIT Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned int __get_MCOUNTINHIBIT(void)
+{
+    uint32_t result;
+    __ASM volatile("csrr %0, mcountinhibit" : "=r"(result));
+    return result;
+}
+
+/**
+  \brief         Set MHPMEVENT
+  \details       Write MHPMEVENT Register
+  \param [in]    idx    Index of MHPMEVENT Register
+  \param [in]    value  MHPMEVENT Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MHPMEVENT(unsigned long idx, unsigned long value)
+{
+    switch (idx) {
+        case 0: rv_csr_write(0x7E0, value); break;
+        case 2: rv_csr_write(0x7E1, value); break;
+        case 3: rv_csr_write(0x323, value); break;
+        case 4: rv_csr_write(0x324, value); break;
+        case 5: rv_csr_write(0x325, value); break;
+        case 6: rv_csr_write(0x326, value); break;
+        case 7: rv_csr_write(0x327, value); break;
+        case 8: rv_csr_write(0x328, value); break;
+        case 9: rv_csr_write(0x329, value); break;
+        case 10: rv_csr_write(0x32a, value); break;
+        case 11: rv_csr_write(0x32b, value); break;
+        case 12: rv_csr_write(0x32c, value); break;
+        case 13: rv_csr_write(0x32d, value); break;
+        case 14: rv_csr_write(0x32e, value); break;
+        case 15: rv_csr_write(0x32f, value); break;
+        case 16: rv_csr_write(0x330, value); break;
+        case 17: rv_csr_write(0x331, value); break;
+        case 18: rv_csr_write(0x332, value); break;
+        case 19: rv_csr_write(0x333, value); break;
+        case 20: rv_csr_write(0x334, value); break;
+        case 21: rv_csr_write(0x335, value); break;
+        case 22: rv_csr_write(0x336, value); break;
+        case 23: rv_csr_write(0x337, value); break;
+        case 24: rv_csr_write(0x338, value); break;
+        case 25: rv_csr_write(0x339, value); break;
+        case 26: rv_csr_write(0x33a, value); break;
+        case 27: rv_csr_write(0x33b, value); break;
+        case 28: rv_csr_write(0x33c, value); break;
+        case 29: rv_csr_write(0x33d, value); break;
+        case 30: rv_csr_write(0x33e, value); break;
+        case 31: rv_csr_write(0x33F, value); break;
+        default: break;
+    }
+}
+
+/**
+  \brief        Get MHPMEVENT
+  \details      Read MHPMEVENT Register.
+  \param [in]   idx    Index of MHPMEVENT Register to read.
+  \return       MHPMEVENT Register Value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MHPMEVENT(unsigned long idx)
+{
+    switch (idx) {
+        case 0: return rv_csr_read(0x7E0);
+        case 2: return rv_csr_read(0x7E1);
+        case 3: return rv_csr_read(0x323);
+        case 4: return rv_csr_read(0x324);
+        case 5: return rv_csr_read(0x325);
+        case 6: return rv_csr_read(0x326);
+        case 7: return rv_csr_read(0x327);
+        case 8: return rv_csr_read(0x328);
+        case 9: return rv_csr_read(0x329);
+        case 10: return rv_csr_read(0x32a);
+        case 11: return rv_csr_read(0x32b);
+        case 12: return rv_csr_read(0x32c);
+        case 13: return rv_csr_read(0x32d);
+        case 14: return rv_csr_read(0x32e);
+        case 15: return rv_csr_read(0x32f);
+        case 16: return rv_csr_read(0x330);
+        case 17: return rv_csr_read(0x331);
+        case 18: return rv_csr_read(0x332);
+        case 19: return rv_csr_read(0x333);
+        case 20: return rv_csr_read(0x334);
+        case 21: return rv_csr_read(0x335);
+        case 22: return rv_csr_read(0x336);
+        case 23: return rv_csr_read(0x337);
+        case 24: return rv_csr_read(0x338);
+        case 25: return rv_csr_read(0x339);
+        case 26: return rv_csr_read(0x33a);
+        case 27: return rv_csr_read(0x33b);
+        case 28: return rv_csr_read(0x33c);
+        case 29: return rv_csr_read(0x33d);
+        case 30: return rv_csr_read(0x33e);
+        case 31: return rv_csr_read(0x33F);
+        default: return 0;
+    }
+}
+
+/**
+  \brief         Set MHPMEVENTH
+  \details       Write MHPMEVENTH Register
+  \param [in]    idx    Index of MHPMEVENT Register
+  \param [in]    value  MHPMEVENTH Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MHPMEVENTH(unsigned long idx, unsigned long value)
+{
+    switch (idx) {
+        case 3: rv_csr_write(0x723, value); break;
+        case 4: rv_csr_write(0x724, value); break;
+        case 5: rv_csr_write(0x725, value); break;
+        case 6: rv_csr_write(0x726, value); break;
+        case 7: rv_csr_write(0x727, value); break;
+        case 8: rv_csr_write(0x728, value); break;
+        case 9: rv_csr_write(0x729, value); break;
+        case 10: rv_csr_write(0x72A, value); break;
+        case 11: rv_csr_write(0x72B, value); break;
+        case 12: rv_csr_write(0x72C, value); break;
+        case 13: rv_csr_write(0x72D, value); break;
+        case 14: rv_csr_write(0x72E, value); break;
+        case 15: rv_csr_write(0x72F, value); break;
+        case 16: rv_csr_write(0x730, value); break;
+        case 17: rv_csr_write(0x731, value); break;
+        case 18: rv_csr_write(0x732, value); break;
+        case 19: rv_csr_write(0x733, value); break;
+        case 20: rv_csr_write(0x734, value); break;
+        case 21: rv_csr_write(0x735, value); break;
+        case 22: rv_csr_write(0x736, value); break;
+        case 23: rv_csr_write(0x737, value); break;
+        case 24: rv_csr_write(0x738, value); break;
+        case 25: rv_csr_write(0x739, value); break;
+        case 26: rv_csr_write(0x73A, value); break;
+        case 27: rv_csr_write(0x73B, value); break;
+        case 28: rv_csr_write(0x73C, value); break;
+        case 29: rv_csr_write(0x73D, value); break;
+        case 30: rv_csr_write(0x73E, value); break;
+        case 31: rv_csr_write(0x73F, value); break;
+        default: break;
+    }
+}
+
+/**
+  \brief        Get MHPMEVENTH
+  \details      Read MHPMEVENTH Register.
+  \param [in]   idx    Index of MHPMEVENTH Register to read.
+  \return       MHPMEVENTH Register Value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MHPMEVENTH(unsigned long idx)
+{
+    switch (idx) {
+        case 3: return rv_csr_read(0x723);
+        case 4: return rv_csr_read(0x724);
+        case 5: return rv_csr_read(0x725);
+        case 6: return rv_csr_read(0x726);
+        case 7: return rv_csr_read(0x727);
+        case 8: return rv_csr_read(0x728);
+        case 9: return rv_csr_read(0x729);
+        case 10: return rv_csr_read(0x72A);
+        case 11: return rv_csr_read(0x72B);
+        case 12: return rv_csr_read(0x72C);
+        case 13: return rv_csr_read(0x72D);
+        case 14: return rv_csr_read(0x72E);
+        case 15: return rv_csr_read(0x72F);
+        case 16: return rv_csr_read(0x730);
+        case 17: return rv_csr_read(0x731);
+        case 18: return rv_csr_read(0x732);
+        case 19: return rv_csr_read(0x733);
+        case 20: return rv_csr_read(0x734);
+        case 21: return rv_csr_read(0x735);
+        case 22: return rv_csr_read(0x736);
+        case 23: return rv_csr_read(0x737);
+        case 24: return rv_csr_read(0x738);
+        case 25: return rv_csr_read(0x739);
+        case 26: return rv_csr_read(0x73A);
+        case 27: return rv_csr_read(0x73B);
+        case 28: return rv_csr_read(0x73C);
+        case 29: return rv_csr_read(0x73D);
+        case 30: return rv_csr_read(0x73E);
+        case 31: return rv_csr_read(0x73F);
+        default: return 0;
+    }
+}
+
+/**
+  \brief         Set MHPMCOUNTER
+  \details       Write MHPMCOUNTER Register
+  \param [in]    idx    Index of MHPMCOUNTER Register
+  \param [in]    value  MHPMCOUNTER Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MHPMCOUNTER(unsigned long idx, unsigned long value)
+{
+    switch (idx) {
+        case 3: rv_csr_write(0xB03, (value)); break;
+        case 4: rv_csr_write(0xB04, (value)); break;
+        case 5: rv_csr_write(0xB05, (value)); break;
+        case 6: rv_csr_write(0xB06, (value)); break;
+        case 7: rv_csr_write(0xB07, (value)); break;
+        case 8: rv_csr_write(0xB08, (value)); break;
+        case 9: rv_csr_write(0xB09, (value)); break;
+        case 10: rv_csr_write(0xB0A, (value)); break;
+        case 11: rv_csr_write(0xB0B, (value)); break;
+        case 12: rv_csr_write(0xB0C, (value)); break;
+        case 13: rv_csr_write(0xB0D, (value)); break;
+        case 14: rv_csr_write(0xB0E, (value)); break;
+        case 15: rv_csr_write(0xB0F, (value)); break;
+        case 16: rv_csr_write(0xB10, (value)); break;
+        case 17: rv_csr_write(0xB11, (value)); break;
+        case 18: rv_csr_write(0xB12, (value)); break;
+        case 19: rv_csr_write(0xB13, (value)); break;
+        case 20: rv_csr_write(0xB14, (value)); break;
+        case 21: rv_csr_write(0xB15, (value)); break;
+        case 22: rv_csr_write(0xB16, (value)); break;
+        case 23: rv_csr_write(0xB17, (value)); break;
+        case 24: rv_csr_write(0xB18, (value)); break;
+        case 25: rv_csr_write(0xB19, (value)); break;
+        case 26: rv_csr_write(0xB1A, (value)); break;
+        case 27: rv_csr_write(0xB1B, (value)); break;
+        case 28: rv_csr_write(0xB1C, (value)); break;
+        case 29: rv_csr_write(0xB1D, (value)); break;
+        case 30: rv_csr_write(0xB1E, (value)); break;
+        case 31: rv_csr_write(0xB1F, (value)); break;
+        default: break;
+    }
+}
+
+/**
+  \brief       Get MHPMCOUNTER
+  \details     Write MHPMCOUNTER Register.
+  \param [in]  idx      Index of MHPMCOUNTER Register
+  \return      MHPMCOUNTER Register Value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MHPMCOUNTER(unsigned long idx)
+{
+    switch (idx) {
+        case 3: return rv_csr_read(0xB03);
+        case 4: return rv_csr_read(0xB04);
+        case 5: return rv_csr_read(0xB05);
+        case 6: return rv_csr_read(0xB06);
+        case 7: return rv_csr_read(0xB07);
+        case 8: return rv_csr_read(0xB08);
+        case 9: return rv_csr_read(0xB09);
+        case 10: return rv_csr_read(0xB0A);
+        case 11: return rv_csr_read(0xB0B);
+        case 12: return rv_csr_read(0xB0C);
+        case 13: return rv_csr_read(0xB0D);
+        case 14: return rv_csr_read(0xB0E);
+        case 15: return rv_csr_read(0xB0F);
+        case 16: return rv_csr_read(0xB10);
+        case 17: return rv_csr_read(0xB11);
+        case 18: return rv_csr_read(0xB12);
+        case 19: return rv_csr_read(0xB13);
+        case 20: return rv_csr_read(0xB14);
+        case 21: return rv_csr_read(0xB15);
+        case 22: return rv_csr_read(0xB16);
+        case 23: return rv_csr_read(0xB17);
+        case 24: return rv_csr_read(0xB18);
+        case 25: return rv_csr_read(0xB19);
+        case 26: return rv_csr_read(0xB1A);
+        case 27: return rv_csr_read(0xB1B);
+        case 28: return rv_csr_read(0xB1C);
+        case 29: return rv_csr_read(0xB1D);
+        case 30: return rv_csr_read(0xB1E);
+        case 31: return rv_csr_read(0xB1F);
+        default: return 0;
+    }
+}
+
+/**
+  \brief         Set MHPMCOUNTERH
+  \details       Write MHPMCOUNTERH Register
+  \param [in]    idx    Index of MHPMCOUNTERH Register
+  \param [in]    value  MHPMCOUNTERH Register value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MHPMCOUNTERH(unsigned long idx, unsigned long value)
+{
+    switch (idx) {
+        case 3: rv_csr_write(0xC83, (value)); break;
+        case 4: rv_csr_write(0xC84, (value)); break;
+        case 5: rv_csr_write(0xC85, (value)); break;
+        case 6: rv_csr_write(0xC86, (value)); break;
+        case 7: rv_csr_write(0xC87, (value)); break;
+        case 8: rv_csr_write(0xC88, (value)); break;
+        case 9: rv_csr_write(0xC89, (value)); break;
+        case 10: rv_csr_write(0xC8A, (value)); break;
+        case 11: rv_csr_write(0xC8B, (value)); break;
+        case 12: rv_csr_write(0xC8C, (value)); break;
+        case 13: rv_csr_write(0xC8D, (value)); break;
+        case 14: rv_csr_write(0xC8E, (value)); break;
+        case 15: rv_csr_write(0xC8F, (value)); break;
+        case 16: rv_csr_write(0xC90, (value)); break;
+        case 17: rv_csr_write(0xC91, (value)); break;
+        case 18: rv_csr_write(0xC92, (value)); break;
+        case 19: rv_csr_write(0xC93, (value)); break;
+        case 20: rv_csr_write(0xC94, (value)); break;
+        case 21: rv_csr_write(0xC95, (value)); break;
+        case 22: rv_csr_write(0xC96, (value)); break;
+        case 23: rv_csr_write(0xC97, (value)); break;
+        case 24: rv_csr_write(0xC98, (value)); break;
+        case 25: rv_csr_write(0xC99, (value)); break;
+        case 26: rv_csr_write(0xC9A, (value)); break;
+        case 27: rv_csr_write(0xC9B, (value)); break;
+        case 28: rv_csr_write(0xC9C, (value)); break;
+        case 29: rv_csr_write(0xC9D, (value)); break;
+        case 30: rv_csr_write(0xC9E, (value)); break;
+        case 31: rv_csr_write(0xC9F, (value)); break;
+        default: break;
+    }
+}
+
+/**
+  \brief       Get MHPMCOUNTERH
+  \details     Write MHPMCOUNTERH Register.
+  \param [in]  idx      Index of MHPMCOUNTERH Register
+  \return      MHPMCOUNTERH Register Value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MHPMCOUNTERH(unsigned long idx)
+{
+    switch (idx) {
+        case 3: return rv_csr_read(0xC83);
+        case 4: return rv_csr_read(0xC84);
+        case 5: return rv_csr_read(0xC85);
+        case 6: return rv_csr_read(0xC86);
+        case 7: return rv_csr_read(0xC87);
+        case 8: return rv_csr_read(0xC88);
+        case 9: return rv_csr_read(0xC89);
+        case 10: return rv_csr_read(0xC8A);
+        case 11: return rv_csr_read(0xC8B);
+        case 12: return rv_csr_read(0xC8C);
+        case 13: return rv_csr_read(0xC8D);
+        case 14: return rv_csr_read(0xC8E);
+        case 15: return rv_csr_read(0xC8F);
+        case 16: return rv_csr_read(0xC90);
+        case 17: return rv_csr_read(0xC91);
+        case 18: return rv_csr_read(0xC92);
+        case 19: return rv_csr_read(0xC93);
+        case 20: return rv_csr_read(0xC94);
+        case 21: return rv_csr_read(0xC95);
+        case 22: return rv_csr_read(0xC96);
+        case 23: return rv_csr_read(0xC97);
+        case 24: return rv_csr_read(0xC98);
+        case 25: return rv_csr_read(0xC99);
+        case 26: return rv_csr_read(0xC9A);
+        case 27: return rv_csr_read(0xC9B);
+        case 28: return rv_csr_read(0xC9C);
+        case 29: return rv_csr_read(0xC9D);
+        case 30: return rv_csr_read(0xC9E);
+        case 31: return rv_csr_read(0xC9F);
+        default: return 0;
+    }
 }
 
 #if 0

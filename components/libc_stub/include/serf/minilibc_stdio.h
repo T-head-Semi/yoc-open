@@ -8,7 +8,7 @@
  */
 
 #ifndef _MINILIBC_STDIO_H_
-#define _MINILIBC_STDIO_H__
+#define _MINILIBC_STDIO_H_
 
 #include <stdarg.h>
 

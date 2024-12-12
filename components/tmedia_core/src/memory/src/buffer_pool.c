@@ -218,11 +218,20 @@ void TMCommonPool_UnInit()
 {
     TMBufferPool *pool;
     int i;
+    int ret;
 
     for (i = 0; i < g_commonPool.poolsCfg.count; i++)
     {
         pool = g_commonPool.pools[i];
-        TMBufferPool_Release(pool);
+        ret = TMBufferPool_Release(pool);
+        if (ret < 0)
+        {
+            printf("Release commonPool[%d] failed\n", i);
+        }
+        else if (ret > 0)
+        {
+            printf("Memory Leak: %d buffers leak in commonPool[%d]!\n", ret, i);
+        }
 
         if (g_commonPool.poolsCfg.cfg[i].allocator)
         {
@@ -258,9 +267,19 @@ int TMCommonPool_Setup()
         bufferPool = TMBufferPool_New(cfg);
         if (!bufferPool)
         {
+            printf("create buffer pool fail\n");
+            int ret;
             for (j = 0; j < i; j++)
             {
-                TMBufferPool_Release(g_commonPool.pools[j]);
+                ret = TMBufferPool_Release(g_commonPool.pools[j]);
+                if (ret < 0)
+                {
+                    printf("Release pool failed\n");
+                }
+                else if (ret > 0)
+                {
+                    printf("Memory Leak: %d buffers leak!\n", ret);
+                }
             }
             return -1;
         }
@@ -416,8 +435,16 @@ TMBufferPool *TMBufferPool_New(const TMBufferPoolConfig *cfg)
 
     if (i != pool->cfg.bufferCnt)
     {
-        TMBufferPool_Release((TMBufferPool *)pool);
         printf("create buffer pool fail\n");
+        int ret = TMBufferPool_Release((TMBufferPool *)pool);
+        if (ret < 0)
+        {
+            printf("Release pool failed\n");
+        }
+        else if (ret > 0)
+        {
+            printf("Memory Leak: %d buffers leak!\n", ret);
+        }
         return NULL;
     }
 

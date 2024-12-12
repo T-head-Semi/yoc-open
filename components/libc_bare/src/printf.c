@@ -30,6 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#if !CONFIG_SEMIHOST_NATIVE
+
 #include <stdarg.h>
 #include <stddef.h>
 #include <sys/stat.h>
@@ -1024,3 +1026,5 @@ int fctprintf(void (*out)(char character, void* arg), void* arg, const char* for
     va_end(va);
     return ret;
 }
+
+#endif /* end CONFIG_SEMIHOST_NATIVE */

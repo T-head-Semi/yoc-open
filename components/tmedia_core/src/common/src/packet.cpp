@@ -53,6 +53,10 @@ TMPacket::TMPacket()
       mNativePacketCtx(NULL)
 {
     mInternalMalloc = false;
+    mEOS = false;
+    mStreamIndex = 0;
+    mCodecID = TMMediaInfo::CodecID::UNKNOWN;
+    mPlatformPriv = NULL;
 }
 
 TMPacket::TMPacket(const TMPacket& packet)
@@ -541,6 +545,10 @@ void TMVideoPacket::Dump()
 TMAudioPacket::TMAudioPacket()
 {
     mDataType = TMData::Type::STREAM_AUDIO;
+    mSampleRate = 0;
+    mSampleBits = AUDIO_SAMPLE_BITS_UNKNOW;
+    mSampleChannels = AUDIO_SAMPLE_CHANNE_UNKNOW;
+    mPcmDataType = AUDIO_PCM_ACCESS_RW_UNKNOW;
 }
 
 TMAudioPacket::~TMAudioPacket()

@@ -34,7 +34,7 @@ yoc install fs_demo
 
 ##### D1平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_d1/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_d1/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`ble_host`,`freertos` 最终如下所示:
 ```yaml
 depends:
@@ -50,7 +50,7 @@ depends:
 
 ##### bl606P平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_bl606p_e907/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_bl606p_e907/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`bl606p_bthost`,`bl606p_blimpls`,`freertos`如下所示
 ```yaml
 depends:
@@ -68,7 +68,7 @@ depends:
 
 ##### ch2601平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_ch2601/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_ch2601/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`freertos`如下所示
 ```yaml
 depends:
@@ -83,7 +83,7 @@ depends:
 
 ##### f133平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_f133/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_f133/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`ble_host` ,`freertos`最终如下所示:
 ```yaml
 depends:
@@ -320,4 +320,63 @@ fs_task        : fs multi-task test
 ================ AliOS Things Command end ===============
 ```
 
+# littlefs 多分区挂载
 
+## D1平台
+
+1、D1平台的config.yaml 配置
+在  boards/d1_dockpro_evb/configs 目录下，只需要将 config.yaml 内容替换成 config_multi-lfs.yaml 的内容即可
+
+2、 D1平台的宏配置
+在 boards/d1_dockpro_evb/package.yaml 文件下的 `def_config` 选项中增加宏 `CONFIG_FS_LFS_MULTI`
+```yaml
+  def_config:
+  ......
+  CONFIG_FS_LFS_MULTI: y
+```
+## bl606P平台
+1、bl606P平台的config.yaml 配置
+在  boards/bl606p_evb_e907/configs 目录下，只需要将 config.yaml 内容替换成 config_multi-lfs.yaml 的内容即可
+
+2、bl606P平台的宏配置
+在 boards/bl606p_evb_e907/package.yaml 文件下的 `def_config` 选项中增加宏 `CONFIG_FS_LFS_MULTI`
+```yaml
+  def_config:
+  ......
+  CONFIG_FS_LFS_MULTI: y
+```
+## ch2601平台
+1、ch2601平台的config.yaml 配置
+在  boards/ch2601_evb/configs 目录下，只需要将 config.yaml 内容替换成 config_multi-lfs.yaml 的内容即可
+
+2、ch2601平台的宏配置
+在 boards/ch2601_evb/package.yaml 文件下的 `def_config` 选项中增加宏 `CONFIG_FS_LFS_MULTI`
+```yaml
+  def_config:
+  ......
+  CONFIG_FS_LFS_MULTI: y
+```
+## f133平台
+1、f133平台的config.yaml 配置
+在  boards/f133_evb/configs 目录下，只需要将 config.yaml 内容替换成 config_multi-lfs.yaml 的内容即可
+
+2、f133平台的宏配置
+在 boards/f133_evb/package.yaml 文件下的 `def_config` 选项中增加宏 `CONFIG_FS_LFS_MULTI`
+```yaml
+  def_config:
+  ......
+  CONFIG_FS_LFS_MULTI: y
+```
+
+## 运行
+1，在串口输入 `ls -l /mnt1`,有如下打印表示lfs 分区挂载成功
+```
+> ls -l  /mnt1
+drwxrwxrwx root root 0B mnt
+```
+
+2，在串口输入 `ls -l /mnt2` ,有如下打印表示lfs2 分区挂载成功
+```
+>ls -l  /mnt2
+drwxrwxrwx root root 0B mnt
+```

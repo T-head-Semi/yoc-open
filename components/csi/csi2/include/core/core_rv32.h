@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2019 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -419,18 +433,13 @@ typedef struct {
  */
 
 /* Memory mapping of THEAD CPU */
-#define TCIP_BASE           (0xE000E000UL)                            /*!< Titly Coupled IP Base Address */
 #define CORET_BASE          (0xE0004000UL)                            /*!< CORET Base Address */
 #define CLIC_BASE           (0xE0800000UL)                            /*!< CLIC Base Address */
 #define SYSMAP_BASE         (0xEFFFF000UL)                            /*!< SYSMAP Base Address */
-#define DCC_BASE            (0xE4010000UL)                            /*!< DCC Base Address */
-#define CACHE_BASE          (TCIP_BASE +  0x1000UL)                   /*!< CACHE Base Address */
 
 #define CORET               ((CORET_Type   *)     CORET_BASE  )       /*!< SysTick configuration struct */
 #define CLIC                ((CLIC_Type    *)     CLIC_BASE   )       /*!< CLIC configuration struct */
-#define DCC                 ((DCC_Type     *)     DCC_BASE    )       /*!< DCC configuration struct */
 #define SYSMAP              ((SYSMAP_Type  *)     SYSMAP_BASE )       /*!< SYSMAP configuration struct */
-#define CACHE               ((CACHE_Type   *)     CACHE_BASE  )       /*!< cache configuration struct */
 
 /*@} */
 
@@ -462,8 +471,8 @@ __STATIC_INLINE int csi_get_cpu_id(void)
  */
 __STATIC_INLINE int csi_get_cache_line_size(void)
 {
-#if CONFIG_CPU_E906 || CONFIG_CPU_E906F || CONFIG_CPU_E906FD || CONFIG_CPU_E906P || CONFIG_CPU_E906FP || CONFIG_CPU_E906FDP \
-    || CONFIG_CPU_E907 || CONFIG_CPU_E907F || CONFIG_CPU_E907FD || CONFIG_CPU_E907P || CONFIG_CPU_E907FP || CONFIG_CPU_E907FDP
+#if CONFIG_CPU_XUANTIE_E906 || CONFIG_CPU_XUANTIE_E906F || CONFIG_CPU_XUANTIE_E906FD || CONFIG_CPU_XUANTIE_E906P || CONFIG_CPU_XUANTIE_E906FP || CONFIG_CPU_XUANTIE_E906FDP \
+    || CONFIG_CPU_XUANTIE_E907 || CONFIG_CPU_XUANTIE_E907F || CONFIG_CPU_XUANTIE_E907FD || CONFIG_CPU_XUANTIE_E907P || CONFIG_CPU_XUANTIE_E907FP || CONFIG_CPU_XUANTIE_E907FDP
     return 8;
 #else
     return 4;
@@ -1216,7 +1225,7 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range (unsigned long *addr, size_t
 
 /*@} end of CSI_Core_CacheFunctions */
 
-#if (CONFIG_CPU_E907 || CONFIG_CPU_E907F || CONFIG_CPU_E907FD || CONFIG_CPU_E907P || CONFIG_CPU_E907FP || CONFIG_CPU_E907FDP)
+#if (CONFIG_CPU_XUANTIE_E907 || CONFIG_CPU_XUANTIE_E907F || CONFIG_CPU_XUANTIE_E907FD || CONFIG_CPU_XUANTIE_E907P || CONFIG_CPU_XUANTIE_E907FP || CONFIG_CPU_XUANTIE_E907FDP)
 /**
  \ingroup    CSI_tcm_register
  \defgroup   CSI_TCM
@@ -1320,35 +1329,65 @@ __STATIC_INLINE void csi_dtcm_disable (void)
 }
 
 /**
- \brief   Get ITCM Size
- \details Get ITCM Size
- \return         ITCM size (bytes).
- */
-__STATIC_INLINE unsigned long csi_itcm_get_size(void)
+  \brief   Get ITCM Size
+  \details Get ITCM Size
+  \return         ITCM size (bytes).
+  */
+__STATIC_INLINE uint32_t csi_itcm_get_size(void)
 {
     MITCMCR_Type sizemask;
-    unsigned long ret;
+    uint32_t ret;
 
     sizemask.w = __get_MITCMCR();
-    ret = sizemask.b.Size;
-
-    return (1 << ret) << 9;
+    switch (sizemask.b.Size)
+    {
+        case 0x3: ret = 4 << 10; break;
+        case 0x4: ret = 8 << 10; break;
+        case 0x5: ret = 16 << 10; break;
+        case 0x6: ret = 32 << 10; break;
+        case 0x7: ret = 64 << 10; break;
+        case 0x8: ret = 128 << 10; break;
+        case 0x9: ret = 256 << 10; break;
+        case 0xa: ret = 512 << 10; break;
+        case 0xb: ret = 1 << 20; break;
+        case 0xc: ret = 2 << 20; break;
+        case 0xd: ret = 4 << 20; break;
+        case 0xe: ret = 8 << 20; break;
+        case 0xf: ret = 16 << 20; break;
+        default: ret = 0; break;
+    }
+    return ret;
 }
 
 /**
- \brief   Get DTCM Size
- \details Get DTCM Size
- \return         DTCM size (bytes).
- */
-__STATIC_INLINE unsigned long csi_dtcm_get_size(void)
+  \brief   Get DTCM Size
+  \details Get DTCM Size
+  \return         DTCM size (bytes).
+  */
+__STATIC_INLINE uint32_t csi_dtcm_get_size(void)
 {
     MDTCMCR_Type sizemask;
-    unsigned long ret;
+    uint32_t ret;
 
     sizemask.w = __get_MDTCMCR();
-    ret = sizemask.b.Size;
-
-    return (1 << ret) << 9;
+    switch (sizemask.b.Size)
+    {
+        case 0x3: ret = 4 << 10; break;
+        case 0x4: ret = 8 << 10; break;
+        case 0x5: ret = 16 << 10; break;
+        case 0x6: ret = 32 << 10; break;
+        case 0x7: ret = 64 << 10; break;
+        case 0x8: ret = 128 << 10; break;
+        case 0x9: ret = 256 << 10; break;
+        case 0xa: ret = 512 << 10; break;
+        case 0xb: ret = 1 << 20; break;
+        case 0xc: ret = 2 << 20; break;
+        case 0xd: ret = 4 << 20; break;
+        case 0xe: ret = 8 << 20; break;
+        case 0xf: ret = 16 << 20; break;
+        default: ret = 0; break;
+    }
+    return ret;
 }
 
 /**

@@ -14,6 +14,12 @@ using namespace std;
 TMVpssParams::TMVpssParams()
 {
     Reset();
+    mMaxWidth = 0;
+    mMaxHeight = 0;
+    mPixelFormat = TMImageInfo::PixelFormat::PIXEL_FORMAT_NV12;
+    mDynamicRange = DYNAMIC_RANGE_SDR8;
+    mFrameRate.dstFrameRate = 0;
+    mFrameRate.srcFrameRate = 0;
 }
 
 void TMVpssParams::Reset()

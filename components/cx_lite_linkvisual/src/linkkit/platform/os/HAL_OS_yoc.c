@@ -33,7 +33,7 @@
  *
  */
 
-int HAL_GetFirmwareVersion(_OU_ char *version)
+int HAL_GetFirmwareVersion(_OU_ char version[FIRMWARE_VERSION_MAXLEN])
 {
     memset(version, 0x0, FIRMWARE_VERSION_MAXLEN);
 
@@ -461,7 +461,7 @@ int HAL_Vsnprintf(char *str, const int len, const char *format, va_list ap)
     return vsnprintf(str, len, format, ap);
 }
 
-int HAL_GetModuleID(char *mid_str)
+int HAL_GetModuleID(_OU_ char mid_str[MID_STR_MAXLEN])
 {
     memset(mid_str, 0x0, MID_STRLEN_MAX);
     strcpy(mid_str, "example.demo.module-id");

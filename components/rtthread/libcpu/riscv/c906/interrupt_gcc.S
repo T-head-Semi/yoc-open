@@ -47,6 +47,9 @@ tspend_exit:
     RESTORE_ALL
     mret
 
+    .size   Mtspend_Handler, . - Mtspend_Handler
+    .size   Stspend_Handler, . - Stspend_Handler
+
 .global cpu_intrpt_restore
 .global rt_hw_interrupt_enable
 .global cpu_intrpt_save

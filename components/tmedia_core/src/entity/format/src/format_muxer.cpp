@@ -8,6 +8,7 @@ using namespace std;
 
 TMFormatMuxer::TMFormatMuxer()
 {
+    mFormatID = TMMediaInfo::FormatID::UNKNOWN;
 }
 
 TMFormatMuxer::~TMFormatMuxer()

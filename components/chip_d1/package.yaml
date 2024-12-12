@@ -1,7 +1,7 @@
 
 ## 第一部分： 基础信息
 name: chip_d1                                    # <必选项> 包名称 （符合C语言变量命名规则），长度少于等于64字节
-version: v7.9.1                                   # <必选项> 组件版本号
+version: v8.0.0                                   # <必选项> 组件版本号
 description: driver & sdk for platform/mcu d1  chip         # <必选项> 建议至少20字以上
 type: chip                                          # <必选项> 组件类型，为：solution, chip, board, common, sdk
 
@@ -89,7 +89,6 @@ hw_info:
 build_config:
   cflag:
   cxxflag:
-  ldflag:
   asmflag: -D__ASSEMBLY__
   libs:                                  # 该组件中支持的二进制静态库,如：libxxx.a, libyyy.a
     - chip_d1_melis                      #   -lxxx
@@ -153,7 +152,7 @@ def_config:
   CONFIG_NON_ADDRESS_FLASH: y
   CONFIG_CSI_V2: 1
   CONFIG_CSI: "csi2"
-  CONFIG_CPU_C906FDV: 1
+  CONFIG_CPU_XUANTIE_C906FDV: 1
   CONFIG_RISCV_VECTOR_LEN: 128
   CONFIG_ARCH_INTERRUPTSTACK: 4096
   CONFIG_SOC_SUN20I: 1

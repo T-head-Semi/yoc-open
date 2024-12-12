@@ -80,6 +80,8 @@ public:
                               const TMImageInfo::ImageSize_t &dst_size, TMImageInfo::PixelFormat dst_format, TMVideoFrame &dst) = 0;
     virtual int BatchCropResize(const TMVideoFrame &src, ImageProcConfig_t *dst_config, int count, TMVideoFrame **dst) { return TMResult::TM_NOT_SUPPORT; }
     virtual int Padding(const TMVideoFrame &src, PaddingType_e type, PaddingInfo_t info, TMVideoFrame &dst) { return TMResult::TM_NOT_SUPPORT; }
+    virtual int CvtResizeSplit(const TMVideoFrame &src, const ImageProcConfig_t *dst_config, const int dst_count, TMVideoFrame **dst) = 0;
+    virtual int CvtResizeMerge(const TMVideoFrame **src, const int src_count, const TMImageInfo::ImageSize_t &dst_size, TMImageInfo::PixelFormat dst_format, TMVideoFrame &dst) = 0;
 };
 
 #endif  // IMAGE_PROC_H

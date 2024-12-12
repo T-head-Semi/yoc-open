@@ -173,6 +173,49 @@ int TMInterpreterCSINN::LoadNet(const InterpreterNet *net)
             if (!mSess)
                 printf("csinn_ failed.\n");
         }
+
+        const auto tensor_size = [](struct csinn_tensor *tensor) {
+            int size = 1;
+            for (int i = 0; i < tensor->dim_count; ++i) {
+                size *= tensor->dim[i];
+            }
+            size *= DataTypeElemSize(tensor->dtype);
+
+            return size;
+        };
+
+        const auto tensor_name = [](struct csinn_tensor *tensor, string &properties) {
+            const int kMaxNameLen = 16;
+            if (strlen(tensor->name) <= kMaxNameLen) {
+                properties += tensor->name;
+            } else {
+                properties.append(tensor->name, kMaxNameLen - 1).append(1, '*');
+            }
+        };
+
+        if (mSess) {
+            string properties = "type=csinn,input=[";
+            for (int i = 0; i < mSess->input_num; ++i) {
+                auto tensor = mSess->input[i];
+                auto size = tensor_size(tensor);
+                properties += "(name=";
+                tensor_name(tensor, properties);
+                properties += ",size=" + to_string(size) + "),";
+            }
+            properties.pop_back();
+            properties += "],output=[";
+            for (int i = 0; i < mSess->output_num; ++i) {
+                auto tensor = mSess->output[i];
+                auto size = tensor_size(tensor);
+                properties += "(name=";
+                tensor_name(tensor, properties);
+                properties += ",size=" + to_string(size) + "),";
+            }
+            properties.pop_back();
+            properties += "]";
+
+            ProfilingProperties(uint64_t(-1), properties.data());
+        }
     }
     else
     {
@@ -181,6 +224,11 @@ int TMInterpreterCSINN::LoadNet(const InterpreterNet *net)
     }
 
     return TMResult::TM_OK;
+}
+
+int TMInterpreterCSINN::ProfilingProperties(const uint64_t channelId, const char *properties) {
+    asm("nop");
+    return 0;
 }
 
 int TMInterpreterCSINN::UnLoadNet()

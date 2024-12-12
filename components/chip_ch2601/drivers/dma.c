@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2019 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /******************************************************************************
@@ -129,10 +143,13 @@ csi_error_t csi_dma_ch_alloc(csi_dma_ch_t *dma_ch, int8_t ch_id, int8_t ctrl_id)
 {
     CSI_PARAM_CHK(dma_ch, CSI_ERROR);
     uint32_t temp, ch_alloc_status;
+    uint32_t is_exist = false;
     csi_error_t ret = CSI_OK;
     wj_dma_ch_regs_t *dma_ch_addr;
     csi_dma_ch_desc_t ch_info;
     csi_dev_t *dev_info;
+    csi_dma_ch_t *dma_ch_node = NULL;
+    slist_t *dma_ch_temp = NULL;
     dev_info = (csi_dev_t *)(dma_ch->parent);
     ch_info.ch_idx = 0;
     ch_info.ctrl_idx = 0;
@@ -171,7 +188,17 @@ csi_error_t csi_dma_ch_alloc(csi_dma_ch_t *dma_ch, int8_t ch_id, int8_t ctrl_id)
 
     if (ret != CSI_ERROR) {
         dma_ch->etb_ch_id = -1;
-        slist_add(&dma_ch->next, &dma_array[dma_ch->ctrl_id]->head);
+        dma_ch_temp = &dma_ch->next;
+        slist_for_each_entry(&dma_array[dma_ch->ctrl_id]->head, dma_ch_node, csi_dma_ch_t, next) {
+            if (dma_ch_temp == &dma_ch_node->next) {
+                is_exist = true;
+                break;
+            }
+        }
+
+       if (!is_exist) {
+           slist_add(&dma_ch->next, &dma_array[dma_ch->ctrl_id]->head);
+        }
         dma_set_int_mask(dma_ch_addr, WJ_DMA_CH_INTM_ERR | WJ_DMA_CH_INTM_TFR | WJ_DMA_CH_INTM_PENDFR);
         dma_int_all_clear(dma_ch_addr);
     }

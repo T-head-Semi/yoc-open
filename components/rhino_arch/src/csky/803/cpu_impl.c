@@ -17,7 +17,7 @@
 #include <k_api.h>
 #include <k_config.h>
 
-#ifdef CONFIG_CPU_CK803EF
+#ifdef CONFIG_CPU_XUANTIE_E803EF
 
 #if (RHINO_CONFIG_STACK_OVF_CHECK_HW != 0)
 void cpu_intrpt_stack_protect(void)

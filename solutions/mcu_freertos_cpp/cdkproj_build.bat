@@ -54,6 +54,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 copy %CHIP_COMP_DIR%\package.yaml.%cpu_name% %CHIP_COMP_DIR%\package.yaml > nul
 copy %BOARD_COMP_DIR%\package.yaml.%board% %BOARD_COMP_DIR%\package.yaml > nul
+copy package.yaml.%board% package.yaml > nul
 
 if exist Obj ( rd /s /q Obj )
 if exist Lst ( rd /s /q Lst )

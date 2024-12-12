@@ -56,6 +56,7 @@ public:
     virtual int Line(const TMVideoFrame &frame_in, TMVideoFrame &frame_out, const TMImageInfo::ImagePos_t &pt1, const TMImageInfo::ImagePos_t &pt2, const TMImageInfo::ColorScalar_t &color, int thickness = 1) = 0;
     virtual int Rectangle(const TMVideoFrame &frame_in, TMVideoFrame &frame_out, const TMImageInfo::ImageRect_t &rect, const TMImageInfo::ColorScalar_t &color, int thickness = 1) = 0;
     virtual int BatchRectangle(const TMVideoFrame &frame_in, TMVideoFrame &frame_out, const TMImageInfo::ImageRect_t *rect, const TMImageInfo::ColorScalar_t &color, int thickness, int count) { return TMResult::TM_NOT_SUPPORT; }
+    virtual int AlphaBlending(const TMVideoFrame &frame_in, TMVideoFrame &frame_out) { return TMResult::TM_NOT_SUPPORT; }
 
     virtual int String(const TMVideoFrame &frame, const TMImageInfo::ImagePos_t &pt, const std::string text, const TMPaint &paint) { return TMResult::TM_NOT_SUPPORT;}
 };

@@ -92,6 +92,12 @@ static void http_get_with_url(const char *url)
         return;
     }
 
+    if (http_client_set_header(client, "Connection", "close") != HTTP_CLI_OK) {
+        http_client_cleanup(client);
+        LOGE(TAG, "http_client_set_header fail\n");
+        return;
+    }
+
     // GET
     http_errors_t err = http_client_perform(client);
     if (err == HTTP_CLI_OK) {
@@ -102,6 +108,7 @@ static void http_get_with_url(const char *url)
     } else {
         LOGE(TAG, "HTTP GET request failed: 0x%x @#@@@@@@", (err));
     }
+    http_client_cleanup(client);
 }
 
 static void http_rest_with_url()

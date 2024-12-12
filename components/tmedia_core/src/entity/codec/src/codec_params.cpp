@@ -17,6 +17,7 @@ TMCodecParams::TMCodecParams()
     : mCodecType(TMMediaInfo::Type::UNKNOWN),
       mCodecID(TMMediaInfo::CodecID::UNKNOWN)
 {
+    mBackendPriv = NULL;
 }
 
 void TMCodecParams::Reset()
@@ -94,6 +95,9 @@ void TMVideoDecoderParams::Dump()
 TMJpegDecoderParams::TMJpegDecoderParams()
 {
     Reset();
+    mOutputWidth = 0;
+    mOutputHeight = 0;
+    mOutputPixelFormat = TMImageInfo::PixelFormat::PIXEL_FORMAT_NV12;
 }
 
 void TMJpegDecoderParams::Reset()

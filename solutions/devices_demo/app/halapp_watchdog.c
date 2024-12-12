@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2015-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,6 +134,7 @@ failure:
 
 static int fd;
 volatile static int devfs_wdt_flag;
+static volatile int devfs_task_quit;
 void devfs_wdt_callback(rvm_dev_t *dev, void *arg)
 {
     devfs_wdt_flag = 1;
@@ -132,7 +147,7 @@ static void task_devfs_feedwdg_entry(void *arg)
      * The task fed the watchdog every 1000ms. The feeding interval must be less than the
      * watchdog timeout, otherwise it will trigger by mistake.
      */
-    while (!task_quit) {
+    while (!devfs_task_quit) {
         printf("devfs feed the watchdog!\r\n");
 
         int ret = ioctl(fd, WDT_IOC_FEED);
@@ -184,7 +199,7 @@ int devfs_wdt_demo(void)
     }
 
     /* Create the task to feed the watchdog */
-    task_quit = 0;
+    devfs_task_quit = 0;
     ret = aos_task_new_ext(&task_feedwdg, (const char *)TASK_DEVFS_FEEDWDG_NAME, task_devfs_feedwdg_entry, NULL,
                            TASK_FEEDWDG_STACKSIZE, TASK_FEEDWDG_PRI);
     if (ret != 0) {
@@ -202,7 +217,7 @@ int devfs_wdt_demo(void)
 
     aos_msleep(5000);
     printf("delete the watchdog fedding task\r\n");
-    task_quit = 1;
+    devfs_task_quit = 1;
 #if !defined(CONFIG_CHIP_D1) && !defined(CONFIG_CHIP_CH2601) && !defined(CVI_SOC_CV181XC)
     rvm_wdt_dev_msg_t msg_wdt;
     msg_wdt.callback = devfs_wdt_callback;

@@ -1,8 +1,23 @@
-/*
- * Copyright (C) 2019-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdio.h>
+#include <csi_core.h>
 #include <aos/kernel.h>
 #include <aos/ringbuffer.h>
 #include <drv/uart.h>
@@ -54,13 +69,16 @@ typedef struct {
 
 static int uart_csky_config(rvm_dev_t *dev, rvm_hal_uart_config_t *config);
 
+volatile unsigned long g_uart_can_send = 1;
 static void usart_csky_event_cb_fun(csi_uart_t *uart_handler, csi_uart_event_t event, void *arg)
 {
     uart_dev_t* uart = (uart_dev_t *)arg;
 
     if (!uart)
         return;
-
+#if defined(CONFIG_SMP) && CONFIG_SMP
+    __sync_fetch_and_sub(&g_uart_can_send, 1);
+#endif
     switch (event) {
     case UART_EVENT_SEND_COMPLETE:
         aos_event_set(&uart->event_write_read, EVENT_WRITE, AOS_EVENT_OR);
@@ -117,6 +135,9 @@ static void usart_csky_event_cb_fun(csi_uart_t *uart_handler, csi_uart_event_t e
         // LOGW(TAG, "uart%d event %d", idx, event);
         break;
     }
+#if defined(CONFIG_SMP) && CONFIG_SMP
+    __sync_fetch_and_add(&g_uart_can_send, 1);
+#endif
 }
 
 static rvm_dev_t *uart_csky_init(driver_t *drv, void *config, int id)
@@ -376,6 +397,10 @@ static int uart_csky_send(rvm_dev_t *dev, const void *data, uint32_t size, uint3
         }
         return num;
     } else {
+#if defined(CONFIG_SMP) && CONFIG_SMP
+        __DMB();
+        while(__sync_fetch_and_add(&g_uart_can_send, 0) == 0) {}
+#endif
         unsigned int actl_flags = 0;
         ret = csi_uart_send_async(&UART(dev)->handle, data, size);
         if (ret != CSI_OK) {

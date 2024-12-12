@@ -28,6 +28,7 @@
 extern  int     Int_Glob;
 extern  char    Ch_1_Glob;
 
+SECTION_ATTR
 void Proc_6 (Enum_Val_Par, Enum_Ref_Par)
 /*********************************/
     /* executed once */
@@ -61,7 +62,7 @@ Enumeration *Enum_Ref_Par;
   } /* switch */
 } /* Proc_6 */
 
-
+SECTION_ATTR
 void Proc_7 (Int_1_Par_Val, Int_2_Par_Val, Int_Par_Ref)
 /**********************************************/
     /* executed three times                                      */
@@ -81,7 +82,7 @@ One_Fifty      *Int_Par_Ref;
   *Int_Par_Ref = Int_2_Par_Val + Int_Loc;
 } /* Proc_7 */
 
-
+SECTION_ATTR
 void Proc_8 (Arr_1_Par_Ref, Arr_2_Par_Ref, Int_1_Par_Val, Int_2_Par_Val)
 /*********************************************************************/
     /* executed once      */
@@ -106,7 +107,7 @@ int             Int_2_Par_Val;
   Int_Glob = 5;
 } /* Proc_8 */
 
-
+SECTION_ATTR
 Enumeration Func_1 (Ch_1_Par_Val, Ch_2_Par_Val)
 /*************************************************/
     /* executed three times                                         */
@@ -132,7 +133,7 @@ Capital_Letter   Ch_2_Par_Val;
    }
 } /* Func_1 */
 
-
+SECTION_ATTR
 Boolean Func_2 (Str_1_Par_Ref, Str_2_Par_Ref)
 /*************************************************/
     /* executed once */
@@ -174,7 +175,7 @@ Str_30  Str_2_Par_Ref;
   } /* if Ch_Loc */
 } /* Func_2 */
 
-
+SECTION_ATTR
 Boolean Func_3 (Enum_Par_Val)
 /***************************/
     /* executed once        */

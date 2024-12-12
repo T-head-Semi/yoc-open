@@ -73,10 +73,18 @@ cp $BOARD_COMP/package.yaml $BOARD_COMP/package.yaml.bak
 cp $CHIP_COMP/package.yaml.$cpu_name $CHIP_COMP/package.yaml
 cp $BOARD_COMP/package.yaml.$board $BOARD_COMP/package.yaml
 
+if [[ $cpu_name = "e"* ]]; then
+	cp package.yaml package.yaml.bak
+	cp package.yaml.smartl package.yaml
+fi
+
 #echo "===start to compile==="
 make || exit 1
 #echo "===compile done!!!==="
 
 mv $CHIP_COMP/package.yaml.bak $CHIP_COMP/package.yaml
 mv $BOARD_COMP/package.yaml.bak $BOARD_COMP/package.yaml
+if [[ $cpu_name = "e"* ]]; then
+	mv package.yaml.bak package.yaml
+fi
 

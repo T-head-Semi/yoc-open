@@ -32,7 +32,7 @@ public:
         CUSTOM_DUMMY = 128,
     };
 
-    TMEvent() : mType(Type::UNKNOWN) {};
+    TMEvent() : mType(Type::UNKNOWN) ,mTimeStamp(0), mSeqNum(0) {};
     TMEvent(TMEvent::Type type, uint64_t timeStamp=0, uint64_t seqNum=0)
            : mType(type), mTimeStamp(timeStamp), mSeqNum(seqNum) {};
     virtual ~TMEvent() {};

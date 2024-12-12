@@ -73,10 +73,13 @@ cp $BOARD_COMP/package.yaml $BOARD_COMP/package.yaml.bak
 cp $CHIP_COMP/package.yaml.$cpu_name $CHIP_COMP/package.yaml
 cp $BOARD_COMP/package.yaml.$board $BOARD_COMP/package.yaml
 
+cp ./package.yaml ./package.yaml.bak
+cp ./package.yaml.$board ./package.yaml
+
 #echo "===start to compile==="
 make || exit 1
 #echo "===compile done!!!==="
 
+mv ./package.yaml.bak ./package.yaml
 mv $CHIP_COMP/package.yaml.bak $CHIP_COMP/package.yaml
 mv $BOARD_COMP/package.yaml.bak $BOARD_COMP/package.yaml
-

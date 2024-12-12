@@ -1,7 +1,29 @@
-/*
- * Copyright (C) 2017-2019 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
+#include <reent.h>
+#include <errno.h>
+#include <stdio.h>
+#include <sys/unistd.h>
+#include <time.h>
+#include <sys/time.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <csi_config.h>
 #include <string.h>
 #include <umm_heap.h>
@@ -54,4 +76,40 @@ MALLOC_WEAK void *calloc(size_t nmemb, size_t size)
 
     return ptr;
 }
+
+void *_malloc_r(struct _reent *ptr, size_t size)
+{
+    void *mem;
+    mem = malloc(size);
+    return mem;
+}
+
+void *_realloc_r(struct _reent *ptr, void *old, size_t newlen)
+{
+    void *mem;
+    mem = realloc(old, newlen);
+    return mem;
+}
+
+void *_calloc_r(struct _reent *ptr, size_t size, size_t len)
+{
+    void *mem;
+
+    mem = calloc(size, len);
+
+    return mem;
+}
+
+void *_memalign_r(struct _reent *ptr, size_t alignment, size_t size)
+{
+    return NULL;
+}
+
+void _free_r(struct _reent *ptr, void *addr)
+{
+    if (!addr)
+        return;
+    free(addr);
+}
+
 

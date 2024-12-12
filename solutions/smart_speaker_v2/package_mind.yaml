@@ -1,7 +1,7 @@
 
 ## 第一部分： 基础信息
 name: smart_speaker_v2                              # <必选项> 包名称 （符合C语言变量命名规则），长度少于等于64字节
-version: v7.9.1                                    # <必选项> 组件版本号
+version: v8.0.0                                    # <必选项> 组件版本号
 description: 智能语音终端，达摩院KWS评估算法           # <必选项> 建议至少20字以上
 type: solution                                      # <必选项> 组件类型，为：solution, chip, board, common, sdk
 
@@ -12,53 +12,53 @@ type: solution                                      # <必选项> 组件类型�
 #   - minilibc: v7.2.0
 #   - aos: >=v7.2.0
 sdk_chip:
-  - sdk_chip_bl606p_e907: v7.9.1
-  - sdk_chip_d1: v7.9.1
-  - sdk_chip_f133: v7.9.1
-  - sdk_chip_cv181xh_bga: v7.9.1
+  - sdk_chip_bl606p_e907: v8.0.0
+  - sdk_chip_d1: v8.0.0
+  - sdk_chip_f133: v8.0.0
+  - sdk_chip_cv181xh_bga: v8.0.0
 
 mkflash_script: mkflash.sh
 
 depends:
-  - sdk_chip_bl606p_e907: v7.9.1
-  - av: v7.9.1
-  - amrnb: v7.9.1
-  - amrwb: v7.9.1
-  - flac: v7.9.1
-  - ogg: v7.9.1
-  - opus: v7.9.1
-  - pvmp3dec: v7.9.1
-  - sonic: v7.9.1
-  - speex: v7.9.1
-  - speexdsp: v7.9.1
-  - netmgr: v7.9.1
-  - littlefs: v7.9.1
-  - zlib: v7.9.1
-  - ntp: v7.9.1
-  - smart_audio: v7.9.1
-  - drv_amplifier: v7.9.1
-  - wifi_provisioning: v7.9.1
-  - aui_cloud_mind: v7.9.1
-  - cjson: v7.9.1
-  - alg_pcm_input: v7.9.1
-  - alg_record: v7.9.1
-  - record: v7.9.1
-  - websocket: v7.9.1
-  - posto: v7.9.1
-  - cxvision: v7.9.1
-  - voice_wrapper: v7.9.1
-  - httpclient: v7.9.1
-  - transport: v7.9.1
-  - button: v7.9.1
-  - alg_dispatch: v7.9.1         # alg: mind & xuantie
-  - alg_kws_mind_v1: v7.9.1 
-  - voice_mind: v7.9.1           # alg: mind
-  - adb: v7.9.1
-  - clock_alarm: v7.9.1
-  - at: v7.9.1
-  - ers: v7.9.1
-  - ota_module: v7.9.1
-  - drv_ethernet: v7.9.1
+  - sdk_chip_bl606p_e907: v8.0.0
+  - av: v8.0.0
+  - amrnb: v8.0.0
+  - amrwb: v8.0.0
+  - flac: v8.0.0
+  - ogg: v8.0.0
+  - opus: v8.0.0
+  - pvmp3dec: v8.0.0
+  - sonic: v8.0.0
+  - speex: v8.0.0
+  - speexdsp: v8.0.0
+  - netmgr: v8.0.0
+  - littlefs: v8.0.0
+  - zlib: v8.0.0
+  - ntp: v8.0.0
+  - smart_audio: v8.0.0
+  - drv_amplifier: v8.0.0
+  - wifi_provisioning: v8.0.0
+  - aui_cloud_mind: v8.0.0
+  - cjson: v8.0.0
+  - alg_pcm_input: v8.0.0
+  - alg_record: v8.0.0
+  - record: v8.0.0
+  - websocket: v8.0.0
+  - posto: v8.0.0
+  - cxvision: v8.0.0
+  - voice_wrapper: v8.0.0
+  - httpclient: v8.0.0
+  - transport: v8.0.0
+  - button: v8.0.0
+  - alg_dispatch: v8.0.0         # alg: mind & xuantie
+  - alg_kws_mind_v1: v8.0.0 
+  - voice_mind: v8.0.0           # alg: mind
+  - adb: v8.0.0
+  - clock_alarm: v8.0.0
+  - at: v8.0.0
+  - ers: v8.0.0
+  - ota_module: v8.0.0
+  - drv_ethernet: v8.0.0
 
 ## 第三部分：板级信息
 # hw_info:                                 # 对 solution、board、chip 三个字段的改进，统称为 hw_info 字段

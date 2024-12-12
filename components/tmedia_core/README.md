@@ -1,9 +1,3 @@
-# How to get the code
-- git clone git@gitlab.alibaba-inc.com:thead-linux-private/tmedia.git
-
-# How to build
-- https://yuque.antfin.com/occ/rhi9ep/aws4zc
-
 # Description
 - Maintainer: Lu Chongzhi
 

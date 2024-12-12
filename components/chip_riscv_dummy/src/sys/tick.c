@@ -1,8 +1,23 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <soc.h>
+#include <csi_core.h>
 #include <csi_config.h>
 #include <sys_clk.h>
 #include <drv/common.h>
@@ -13,23 +28,35 @@
 
 #define __WEAK         __attribute__((weak))
 
+#if defined(CONFIG_SMP) && CONFIG_SMP
+static volatile uint32_t csi_tick[CONFIG_NR_CPUS] = {0U};
+#else
 static volatile uint32_t csi_tick = 0U;
+#endif
 static volatile uint32_t last_time_ms = 0U;
 static volatile uint64_t last_time_us = 0U;
 static volatile uint64_t timer_init_value = 0U;
 
-#if CONFIG_CPU_E9XX
+#if CONFIG_CPU_XUANTIE_E9XX || CONFIG_INTC_CLIC_PLIC
 static csi_dev_t tick_dev;
 #endif
 
 void csi_tick_increase(void)
 {
+#if defined(CONFIG_SMP) && CONFIG_SMP
+    csi_tick[csi_get_cpu_id()]++;
+#else
     csi_tick++;
+#endif
 }
 
 uint32_t csi_tick_get(void)
 {
+#if defined(CONFIG_SMP) && CONFIG_SMP
+    return csi_tick[csi_get_cpu_id()];
+#else
     return csi_tick;
+#endif
 }
 
 void tick_irq_handler(void *arg)
@@ -53,13 +80,17 @@ void tick_irq_handler(void *arg)
 
 csi_error_t csi_tick_init(void)
 {
-#if CONFIG_CPU_E9XX
+#if CONFIG_CPU_XUANTIE_E9XX || CONFIG_INTC_CLIC_PLIC
     tick_dev.irq_num = CORET_IRQn;
     csi_vic_set_prio(tick_dev.irq_num, 31U);
     csi_irq_attach(tick_dev.irq_num, &tick_irq_handler, &tick_dev);
 #endif
 
+#if defined(CONFIG_SMP) && CONFIG_SMP
+    csi_tick[csi_get_cpu_id()] = 0;
+#else
     csi_tick = 0U;
+#endif
     timer_init_value = csi_coret_get_value2();
     csi_coret_reset_value2();
     csi_coret_config((soc_get_coretim_freq() / CONFIG_SYSTICK_HZ), CORET_IRQn);
@@ -71,7 +102,7 @@ csi_error_t csi_tick_init(void)
 void csi_tick_uninit(void)
 {
     csi_coret_irq_disable();
-#if CONFIG_CPU_E9XX
+#if CONFIG_CPU_XUANTIE_E9XX || CONFIG_INTC_CLIC_PLIC
     csi_irq_detach(tick_dev.irq_num);
 #endif
 }

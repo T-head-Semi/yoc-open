@@ -1,6 +1,6 @@
 ## 第一部分： 基础信息
 name: gprs_demo
-version: v7.9.1
+version: v8.0.0
 description: gprs demo
 type: solution
 ## 第二部分：依赖信息
@@ -10,16 +10,16 @@ type: solution
 #   - minilibc: v7.2.0
 #   - aos: >=v7.2.0
 sdk_chip:
-  - sdk_chip_cv181xh_bga: v7.9.1
+  - sdk_chip_cv181xh_bga: v8.0.0
 
 mkflash_script: mkflash.sh
 
 depends:
-  - sdk_chip_cv181xh_bga: v7.9.1
-  - littlefs: v7.9.1
-  - cherryusb: v7.9.1
-  - drv_usbh_class: v7.9.1
-  - ulog: v7.9.1
+  - sdk_chip_cv181xh_bga: v8.0.0
+  - littlefs: v8.0.0
+  - cherryusb: v8.0.0
+  - drv_usbh_class: v8.0.0
+  - ulog: v8.0.0
 ## 第三部分：板级信息
 # hw_info:                                 # 对 solution、board、chip 三个字段的改进，统称为 hw_info 字段
 #   cpu_id: cpu0

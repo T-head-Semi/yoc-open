@@ -90,9 +90,6 @@ static inline int aos_task_new_ext(aos_task_t *task, const char *name, void (*fn
 static inline aos_status_t aos_task_delete(aos_task_t *task) {return 0;}
 static inline aos_task_t aos_task_self() {return 0;}
 static inline void aos_task_exit(int code) {}
-static inline int aos_task_sem_new(aos_task_t *task, aos_sem_t *sem, const char *name, int count) {return 0;}
-static inline void aos_task_sem_signal(aos_task_t *task) {}
-static inline int aos_task_sem_wait(unsigned int timeout) {return 0;}
 static inline void aos_msleep(int ms) {}
 static inline aos_status_t aos_queue_create(aos_queue_t *queue, size_t size, size_t max_msg, uint32_t options) {return 0;}
 static inline void aos_queue_free(aos_queue_t *queue) {}

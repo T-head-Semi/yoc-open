@@ -1,3 +1,6 @@
+#ifndef __CONFIG__H_
+#define __CONFIG__H_
+
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
@@ -205,4 +208,6 @@
 #if defined __SUNPRO_CC && !defined __RESTRICT
 # define _Restrict
 # define __restrict__
+#endif
+
 #endif

@@ -2,6 +2,10 @@
 
 `bare_core_dsp` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的exx系列P扩展使用示例，可运行在QEMU环境。
 
+示例程序中会调用libcsi_xt900p32fd_dsp.a(采用P扩展指令封装，实际存储在components/csi/csi2/dsp文件夹中)库中的csi_abs_f32函数计算。
+
+注意：该示例仅支持玄铁处理器带P扩展的型号上编译运行
+
 # 基于Linux编译运行
 
 ## 编译

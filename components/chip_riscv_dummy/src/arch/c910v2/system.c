@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <soc.h>
@@ -36,7 +50,7 @@ unsigned long page_table_l0[512] __attribute__ ((aligned(4096)));
 void _mmu_init(void) __attribute__((noinline));
 void _mmu_init(void)
 {
-#if CONFIG_CPU_C906 || CONFIG_CPU_C906FD || CONFIG_CPU_C906FDV || CONFIG_CPU_C910 || CONFIG_CPU_C920 || CONFIG_CPU_C908 || CONFIG_CPU_C908V || CONFIG_CPU_C908I
+#if CONFIG_CPU_XUANTIE_C906 || CONFIG_CPU_XUANTIE_C906FD || CONFIG_CPU_XUANTIE_C906FDV || CONFIG_CPU_XUANTIE_C910 || CONFIG_CPU_XUANTIE_C920 || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V || CONFIG_CPU_XUANTIE_C908I
     unsigned long status = __get_MXSTATUS();
     /* open MAEE for thead-mmu extension */
     status |= (1 << 21);
@@ -56,7 +70,7 @@ void _mmu_init(void)
 
     /* setup mmu VA(1G ~ 2G-1) <==>  PA(1G ~ 2G-1) */
     page_table_l2[1] = (UPPER_ATTRS(ATTR_CA | ATTR_SH) | (1) << 28 | LOWER_ATTRS(DIRTY_FLAG | ACCESS_FLAG | AP_X | AP_W | AP_R | GLOBAL_FLAG)) | 0x1;
-#elif CONFIG_CPU_C907_RV32 || CONFIG_CPU_C907FD_RV32 || CONFIG_CPU_C907FDV_RV32 || CONFIG_CPU_C907FDVM_RV32
+#elif CONFIG_CPU_XUANTIE_C907_RV32 || CONFIG_CPU_XUANTIE_C907FD_RV32 || CONFIG_CPU_XUANTIE_C907FDV_RV32 || CONFIG_CPU_XUANTIE_C907FDVM_RV32
     unsigned long envcfgh = __get_MENVCFGH();
     /* enable svpbmt */
     envcfgh |= (1 << 30);
@@ -201,7 +215,7 @@ static void interrupt_init(void)
 
 static void section_init(void)
 {
-#ifdef CONFIG_XIP
+#if CONFIG_XIP
     section_data_copy();
     section_ram_code_copy();
     csi_dcache_clean();

@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2015-2017 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <string.h>
@@ -475,8 +489,9 @@ int aos_mutex_lock(aos_mutex_t *mutex, unsigned int ms)
             return -EPERM;
         }
         BaseType_t ret = xSemaphoreTakeRecursive(*mutex, ms == AOS_WAIT_FOREVER ? portMAX_DELAY : pdMS_TO_TICKS(ms));
-        if (ret != pdPASS)
-            return -ETIMEDOUT;
+        if (ret != pdPASS) {
+            return ms == AOS_NO_WAIT ? -EBUSY : -ETIMEDOUT;
+        }
     }
     return 0;
 }
@@ -565,38 +580,6 @@ void aos_sem_signal_all(aos_sem_t *sem)
 {
     // TODO: Not support
 }
-
-int aos_task_sem_new(aos_task_t *task, aos_sem_t *sem, const char *name, int count)
-{
-    return ENOSYS;
-}
-
-int aos_task_sem_free(aos_task_t *task)
-{
-    return ENOSYS;
-}
-
-void aos_task_sem_signal(aos_task_t *task)
-{
-    // TODO: Not Support
-    return;
-}
-
-int aos_task_sem_wait(unsigned int timeout)
-{
-    return ENOSYS;
-}
-
-int aos_task_sem_count_set(aos_task_t *task, int count)
-{
-    return ENOSYS;
-}
-
-int aos_task_sem_count_get(aos_task_t *task, int *count)
-{
-    return ENOSYS;
-}
-
 typedef struct {
     xQueueHandle q;
     int msg_size;
@@ -1481,13 +1464,14 @@ aos_status_t aos_task_sched_policy_get(aos_task_t *task, uint8_t *policy)
     }
 #if (configUSE_PREEMPTION == 1)
 #if (configUSE_TIME_SLICING == 1)
-    return AOS_KSCHED_RR;
+    *policy = AOS_KSCHED_RR;
 #else
-    return AOS_KSCHED_FIFO;
+    *policy = AOS_KSCHED_FIFO;
 #endif /*(configUSE_TIME_SLICING == 1)*/
 #else
-    return AOS_KSCHED_OTHER;
+    *policy = AOS_KSCHED_OTHER;
 #endif
+    return 0;
 }
 
 uint32_t aos_task_sched_policy_get_default(void)
@@ -1521,4 +1505,9 @@ aos_status_t aos_task_time_slice_get(aos_task_t *task, uint32_t *slice)
 uint32_t aos_sched_get_priority_max(uint32_t policy)
 {
     return configMAX_PRIORITIES - 1;
+}
+
+int aos_workqueue_create_ext(aos_workqueue_t *workqueue, const char *name, int pri, int stack_size)
+{
+    return ENOSYS;
 }

@@ -35,6 +35,7 @@ public:
         SCALE_RECT_W,           // int32_t, 0 ~ Origin picture width    default -1 means input's width
         SCALE_RECT_H,           // int32_t, 0 ~ Origin picture height   default -1 menas input's height
         DECODE_MODE_ASYNC,      // bool,    decode use sync or async mode, default is disabled
+        OUTPUT_USE_DECODE_ORDER, // bool,    decode output use decode order, default use display order
     };
 
     TMH264Decoder()
@@ -75,13 +76,14 @@ protected:
             pList[i]->Add(TMProperty((int)PropID::CROP_ENABLE, false, "crop enable"));
             pList[i]->Add(TMProperty((int)PropID::CROP_RECT_X, -1, "crop_x"));
             pList[i]->Add(TMProperty((int)PropID::CROP_RECT_Y, -1, "crop_y"));
-            pList[i]->Add(TMProperty((int)PropID::CROP_RECT_W, -1, "crop _w"));
+            pList[i]->Add(TMProperty((int)PropID::CROP_RECT_W, -1, "crop_w"));
             pList[i]->Add(TMProperty((int)PropID::CROP_RECT_H, -1, "crop_h"));
 
             pList[i]->Add(TMProperty((int)PropID::SCALE_ENABLE, false, "scale enable"));
             pList[i]->Add(TMProperty((int)PropID::SCALE_RECT_W, -1, "scale_w"));
             pList[i]->Add(TMProperty((int)PropID::SCALE_RECT_H, -1, "scale_h"));
             pList[i]->Add(TMProperty((int)PropID::DECODE_MODE_ASYNC, false, "decode_mode"));
+            pList[i]->Add(TMProperty((int)PropID::OUTPUT_USE_DECODE_ORDER, false, "output order"));
         }
     }
 };

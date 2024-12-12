@@ -73,6 +73,7 @@ TMVideoInput *TMFormatVideoInputFactory::CreateEntity(TMMediaInfo::DeviceID devi
         it = mVideoInputClasses().find(deviceID);
         if (it != mVideoInputClasses().end())
         {
+            std::ios_base::fmtflags originalFlags = std::cout.flags();
             vector<pair<string, class_new_t>> &vectorData = mVideoInputClasses()[deviceID];
             cout << "Here are entities matched ID named:" << endl;
             for (size_t i = 0; i < vectorData.size(); i++)
@@ -81,6 +82,7 @@ TMVideoInput *TMFormatVideoInputFactory::CreateEntity(TMMediaInfo::DeviceID devi
             }
             cout << endl;
             cout << "No class name specified, create entity called: %s" << vectorData[0].first << endl;
+            std::cout.flags(originalFlags);
             return (TMVideoInput *)vectorData[0].second();
         } else
         {

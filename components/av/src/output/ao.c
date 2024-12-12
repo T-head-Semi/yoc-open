@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2018-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "av/avutil/av_inner_config.h"
@@ -460,7 +474,7 @@ static void _mixer_ao_task(void *arg)
     uint8_t *buf = ao_get_mixer_buf();
 
     for (;;) {
-        rc = mixer_read(ao_get_mixer(), buf, MIX_BUF_SIZE, 2000);
+        rc = mixer_read(ao_get_mixer(), buf, MIX_BUF_SIZE, 500);
         if (rc > 0) {
             __ao_write(ao_get_real(), buf, rc);
         }

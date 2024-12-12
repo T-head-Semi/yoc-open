@@ -1,7 +1,7 @@
 name: c910
-vendor: thead
+vendor: xuantie
 license: Copyright (C) 2017-2019 Alibaba Group Holding Limited
-description: thead c910 cpu
+description: xuantie c910 cpu
 type: core
 
 versions:

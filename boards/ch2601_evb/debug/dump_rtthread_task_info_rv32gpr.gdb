@@ -48,6 +48,7 @@ define paddr
   set $gdb_x31 = $x31
   set $gdb_mcause = $mcause
   set $gdb_pc  = $pc
+  set $gdb_sp  = $sp
 
   printf "\n"
 
@@ -146,6 +147,7 @@ define paddr
   set  $x31 = $gdb_x31
   set  $mcause = $gdb_mcause
   set  $pc = $gdb_pc
+  set  $sp = $gdb_sp
 printf "---End---\n"
 end
 

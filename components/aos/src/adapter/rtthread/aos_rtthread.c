@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2019-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include <string.h>
 #include <stdlib.h>
@@ -402,8 +416,11 @@ uint8_t rt_task_info_get(rt_thread_t task, size_t idx, void **info)
     {
         return -1;
     }
+    rt_base_t level;
 
+    level = rt_hw_interrupt_disable();
     *info = task->user_info[idx];
+    rt_hw_interrupt_enable(level);
 
     return 0;
 }
@@ -496,8 +513,9 @@ int aos_mutex_lock(aos_mutex_t *mutex, unsigned int timeout)
         else
         {
             res = rt_mutex_take(*mutex, rt_tick_from_millisecond(timeout));
-            if (res == -RT_ETIMEOUT)
-                res = -ETIMEDOUT;
+            if (res == -RT_ETIMEOUT) {
+                res = (timeout == AOS_NO_WAIT) ? -EBUSY : -ETIMEDOUT;
+            }
         }
     }
     return res;
@@ -631,91 +649,6 @@ void aos_sem_signal_all(aos_sem_t *sem)
     aos_check_return(sem && *sem);
 
     rt_sem_control((rt_sem_t)*sem, RT_IPC_CMD_WAKE_ALL, RT_NULL);
-}
-
-int aos_task_sem_new(aos_task_t *task, aos_sem_t *sem, const char *name, int count)
-{
-    rt_err_t ret;
-
-    CHECK_HANDLE(task);
-    aos_check_return_einval(sem);
-
-    rt_thread_t ktask = (rt_thread_t) * task;
-
-    if (name == NULL)
-    {
-        ret = rt_thread_sem_create(ktask, "AOS", count);
-    }
-    else
-    {
-        ret = rt_thread_sem_create(ktask, name, count);
-    }
-
-    return ret;
-}
-
-int aos_task_sem_free(aos_task_t *task)
-{
-    rt_err_t ret;
-
-    CHECK_HANDLE(task);
-
-    rt_thread_t ktask = (rt_thread_t) * task;
-    ret = rt_thread_sem_del(ktask);
-    return ret;
-}
-
-void aos_task_sem_signal(aos_task_t *task)
-{
-    aos_check_return(task && *task);
-
-    rt_thread_t ktask = (rt_thread_t) * task;
-    if (ktask->thread_sem_obj)
-        rt_thread_sem_give(ktask);
-}
-
-int aos_task_sem_wait(unsigned int timeout)
-{
-    rt_err_t ret;
-
-    if (is_in_intrp()) {
-        /* not called by interrupt */
-        return -EPERM;
-    }
-
-    if (timeout == AOS_WAIT_FOREVER)
-    {
-        ret = rt_thread_sem_take(RT_WAITING_FOREVER);
-    }
-    else
-    {
-        ret = rt_thread_sem_take(ms_to_ticks(timeout));
-    }
-
-    return ret;
-}
-
-int aos_task_sem_count_set(aos_task_t *task, int count)
-{
-    rt_err_t ret;
-
-    CHECK_HANDLE(task);
-
-    rt_thread_t ktask = (rt_thread_t) * task;
-    ret = rt_thread_sem_count_set(ktask, count);
-    return ret;
-}
-
-int aos_task_sem_count_get(aos_task_t *task, int *count)
-{
-    rt_err_t ret;
-
-    CHECK_HANDLE(task);
-    aos_check_return_einval(count);
-
-    rt_thread_t ktask = (rt_thread_t) * task;
-    ret = rt_thread_sem_count_get(ktask, (rt_uint32_t *)count);
-    return ret;
 }
 
 int aos_sem_is_valid(aos_sem_t *sem)
@@ -908,6 +841,7 @@ void aos_queue_free(aos_queue_t *queue)
     if (rt_object_is_systemobject((rt_object_t)mq))
     {
         rt_mq_detach(mq);
+        aos_free(*queue);
     }
     else
     {
@@ -1980,6 +1914,7 @@ int aos_get_cur_cpu_id(void)
 #if defined(CONFIG_SMP) && CONFIG_SMP
 void aos_spin_lock_init(aos_spinlock_t *lock)
 {
+    RT_ASSERT(sizeof(aos_spinlock_t) >= sizeof(struct rt_spinlock));
     if (lock)
         rt_spin_lock_init((struct rt_spinlock *)lock);
 }

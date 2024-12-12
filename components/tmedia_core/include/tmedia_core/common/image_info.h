@@ -41,7 +41,8 @@ public:
         PIXEL_FORMAT_BINARY    = 1 << 18, // data format
         PIXEL_FORMAT_NV21      = 1 << 19,
         PIXEL_FORMAT_YV12      = 1 << 20,
-        PIXEL_FORMAT_NV16      = 1 << 21  // semi planar YUV 4:2:2, 16bpp, (1 Cr & Cb sample per 2x1 Y samples)
+        PIXEL_FORMAT_NV16      = 1 << 21,  // semi planar YUV 4:2:2, 16bpp, (1 Cr & Cb sample per 2x1 Y samples)
+        PIXEL_FORMAT_YUV444P   = 1 << 22   // planar YUV 4:4:4
     };
 
     enum Resolution

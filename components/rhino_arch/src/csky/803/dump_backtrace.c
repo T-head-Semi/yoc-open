@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <backtrace.h>
-#ifdef CONFIG_CPU_CK803EF
+#ifdef CONFIG_CPU_XUANTIE_E803EF
 #define BT_SIZE 40
 void *g_bt_buffer[BT_SIZE];
 #define BT_STACK_SIZE 600

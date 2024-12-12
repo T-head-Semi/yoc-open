@@ -47,7 +47,7 @@
 #define ATTR_UNI_SYMBOL            __FILE__ ATTR_TOSTRING(__LINE__)
 #define ATTR_CLOCK_SECTION         __attribute__((section(".sclock_rlt_code." ATTR_UNI_SYMBOL)))
 #define ATTR_CLOCK_CONST_SECTION   __attribute__((section(".sclock_rlt_const." ATTR_UNI_SYMBOL)))
-#define ATTR_TCM_SECTION           __attribute__((section(".tcm_code." ATTR_UNI_SYMBOL)))
+#define ATTR_TCM_SECTION           __attribute__((section(".tcm_code")))
 #define ATTR_TCM_CONST_SECTION     __attribute__((section(".tcm_const." ATTR_UNI_SYMBOL)))
 #define ATTR_DTCM_SECTION          __attribute__((section(".tcm_data")))
 #define ATTR_HSRAM_SECTION         __attribute__((section(".hsram_code")))

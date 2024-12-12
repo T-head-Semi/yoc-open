@@ -29,24 +29,28 @@ netmgr_hdl_t app_netmgr_hdl;
 static void user_local_event_cb(uint32_t event_id, const void *param, void *context)
 {
     switch (event_id) {
-        case EVENT_NETMGR_GOT_IP: {
-            LOGI(TAG, "Got IP");
-            event_publish(EVENT_NTP_RETRY_TIMER, NULL);
-        } break;
-        case EVENT_NETMGR_NET_DISCON: {
-            LOGI(TAG, "Net down");
-        } break;
-        case EVENT_NTP_RETRY_TIMER: {
-            LOGI(TAG, "NTP Start");
-            if (ntp_sync_time(NULL) == 0) {
-                event_publish(EVENT_NET_NTP_SUCCESS, NULL);
-            } else {
-                event_publish_delay(EVENT_NTP_RETRY_TIMER, NULL, 6000);
-            }
-         } break;
-         case EVENT_NET_NTP_SUCCESS: {
-            LOGI(TAG, "NTP Success");
-         } break;
+    case EVENT_NETMGR_GOT_IP: {
+        LOGI(TAG, "Got IP");
+        event_publish(EVENT_NTP_RETRY_TIMER, NULL);
+    }
+    break;
+    case EVENT_NETMGR_NET_DISCON: {
+        LOGI(TAG, "Net down");
+    }
+    break;
+    case EVENT_NTP_RETRY_TIMER: {
+        LOGI(TAG, "NTP Start");
+        if (ntp_sync_time(NULL) == 0) {
+            event_publish(EVENT_NET_NTP_SUCCESS, NULL);
+        } else {
+            event_publish_delay(EVENT_NTP_RETRY_TIMER, NULL, 6000);
+        }
+    }
+    break;
+    case EVENT_NET_NTP_SUCCESS: {
+        LOGI(TAG, "NTP Success");
+    }
+    break;
     }
     /*do exception process */
     app_exception_event(event_id);
@@ -54,6 +58,11 @@ static void user_local_event_cb(uint32_t event_id, const void *param, void *cont
 
 void app_network_init(void)
 {
+    size_t stack_size = 10 * 1024;
+
+#if defined(CONFIG_CHIP_CH2601)
+    return;
+#endif
     /* init wifi driver and network */
 #ifdef CONFIG_WIFI_XR829
     wifi_xr829_register(NULL);
@@ -72,15 +81,17 @@ void app_network_init(void)
     w800_param.channel_id     = 0;
     w800_param.buffer_size    = 4*1024;
     wifi_w800_register(NULL, &w800_param);
+
+    /* reduce mem cost for ch2601 */
+    stack_size = 2 * 1024;
 #else
 #error "No WiFi driver found."
 #endif
 
-
     app_netmgr_hdl = netmgr_dev_wifi_init();
 
     if (app_netmgr_hdl) {
-        utask_t *task = utask_new("netmgr", 10 * 1024, QUEUE_MSG_COUNT, AOS_DEFAULT_APP_PRI);
+        utask_t *task = utask_new("netmgr", stack_size, QUEUE_MSG_COUNT, AOS_DEFAULT_APP_PRI);
         netmgr_service_init(task);
         netmgr_start(app_netmgr_hdl);
     }

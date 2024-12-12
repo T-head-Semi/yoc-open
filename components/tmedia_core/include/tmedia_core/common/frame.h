@@ -122,6 +122,7 @@ public:
     int mOffset[TMFRAME_MAX_PLANE];
     int mWidth;
     int mHeight;
+    bool mForceIdr;
 };
 
 class TMAudioFrame : public TMFrame

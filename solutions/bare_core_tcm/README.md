@@ -1,6 +1,20 @@
 # 概述
 
-`bare_core_tcm` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的tcm功能使用示例。
+`bare_core_tcm` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁处理器紧耦合存储模块(TCM)使用示例。
+
+示例代码中将tcm_code.c对应的代码段等放到_itcm_code中(参考solutions/bare_core_tcm/gcc_flash_tcm_smartl.ld链接脚本中的用法)。系统启动后将_itcm_code等段中的数据拷贝到ITCM/DTCM指定的地址空间中并使能，最后执行tcm_code.c相关函数。
+
+玄铁处理器对于TCM设计有以下特点：
+
+- ITCM/DTCM的基地址不是固定的，可通过设置对应寄存器灵活配置地址空间。可参考示例代码中csi_dtcm_set_base_addr和csi_itcm_set_base_addr
+
+- ITCM/DTCM的使能需要单独设置对应寄存器。可参考示例代码中csi_dtcm_enable和csi_itcm_enable
+
+- ITCM/DTCM的区域大小有soc设计决定。玄铁提供的参考设计ITCM/DTCM默认均为32KB。具体大小也可通过接口csi_itcm_get_size获取
+
+- 对于smartl平台，solutions/bare_core_tcm/gcc_flash_tcm_smartl.ld链接脚本中ITCM/DTCM的基地址分别设置为0x30000000和0x30008000。这两个地址是虚拟的，不占用实际外设等地址空间。于此同时代码中若使用时，需要与这两个地址对应起来
+
+注意：该示例当前仅支持在玄铁带硬件tcm模块的处理器型号上编译运行
 
 # 基于Linux编译运行
 

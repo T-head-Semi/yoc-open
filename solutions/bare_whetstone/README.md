@@ -4,6 +4,8 @@
 
 该示例需要在对应fpga平台上运行，基于QEMU运行无实际意义。
 
+注意：该示例当前仅支持在玄铁带硬浮点的处理器上编译运行
+
 # 基于Linux编译运行
 
 ## 编译
@@ -13,8 +15,8 @@
 ```
 - cpu: <br />
         e906f e906fd e906fp e906fdp e907f e907fd e907fp e907fdp <br />
-        r910 r920 <br />
-        c906fd c906fdv c908 c908v c910 c910v2 c920 c920v2 <br />
+        r910 r920 r908 r908fd r908fdv r908-cp r908fd-cp r908fdv-cp <br />
+        c906fd c906fdv c908 c908v c910 c910v2 c910v3 c910v3-cp c920 c920v2 c920v3 c920v3-cp <br />
         c907fd c907fdv c907fdvm c907fd-rv32 c907fdv-rv32 c907fdvm-rv32
 - platform: <br />
         smartl xiaohui

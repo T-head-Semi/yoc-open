@@ -1,9 +1,24 @@
-/*
- * Copyright (C) 2015-2018 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #if defined(OTA_ENABLED) && !defined(BUILD_AOS)
 #include "stdbool.h"
 #include "iotx_dm_internal.h"
+#include <aos/kernel.h>
 
 static dm_fota_ctx_t g_dm_fota_ctx;
 
@@ -165,7 +180,7 @@ int dm_fota_perform_sync(_OU_ char *output, _IN_ int output_len)
 
     is_doing_fota = true;
 
-    return aos_task_new("ota_yield", dm_fota_yield, NULL, DM_FOTA_TASK_STACK_SIZE);
+    return aos_task_new("ota_yield", (void (*)(void *))dm_fota_yield, NULL, DM_FOTA_TASK_STACK_SIZE);
 }
 
 int dm_fota_status_check(void)

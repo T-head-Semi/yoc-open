@@ -13,8 +13,8 @@
 ```
 - cpu: <br />
         e902 e902m e902t e902mt e906 e906f e906fd e906p e906fp e906fdp e907 e907f e907fd e907p e907fp e907fdp <br />
-        r910 r920 <br />
-        c906 c906fd c906fdv c908 c908v c908i c910 c910v2 c920 c920v2 <br />
+        r910 r920 r908 r908fd r908fdv r908-cp r908fd-cp r908fdv-cp <br />
+        c906 c906fd c906fdv c908 c908v c908i c910 c910v2 c910v3 c910v3-cp c920 c920v2 c920v3 c920v3-cp <br />
         c907 c907fd c907fdv c907fdvm c907-rv32 c907fd-rv32 c907fdv-rv32 c907fdvm-rv32
 - platform: <br />
         smartl xiaohui

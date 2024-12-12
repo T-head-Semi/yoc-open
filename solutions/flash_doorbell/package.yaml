@@ -1,6 +1,6 @@
 ## 第一部分： 基础信息
 name: flash_doorbell
-version: v7.9.1
+version: v8.0.0
 description: yoc doorbell solution
 type: solution
 ## 第二部分：依赖信息
@@ -10,23 +10,23 @@ type: solution
 #   - minilibc: v7.2.0
 #   - aos: >=v7.2.0
 sdk_chip:
-  - sdk_chip_cv181xh_bga: v7.9.1
+  - sdk_chip_cv181xh_bga: v8.0.0
 depends:
-  - sdk_chip_cv181xh_bga: v7.9.1
-  - fota: v7.9.1
-  - httpclient: v7.9.1
-  - transport: v7.9.1
-  - wifi_provisioning: v7.9.1
-  - lvgl: v7.9.1
-  - tmedia_core: v7.9.1
-  - tmedia_backend_seno: v7.9.1
-  - tmedia_backend_cvitek: v7.9.1
-  - cx_lite_base: v7.9.1
-  - cx_lite_record: v7.9.1
-  - cx_lite_linkvisual: v7.9.1
-  - cx_lite_faceai: v7.9.1
-  - cvi_sensor: v7.9.1
-  - cvi_platform: v7.9.1
+  - sdk_chip_cv181xh_bga: v8.0.0
+  - fota: v8.0.0
+  - httpclient: v8.0.0
+  - transport: v8.0.0
+  - wifi_provisioning: v8.0.0
+  - lvgl: v8.0.0
+  - tmedia_core: v8.0.0
+  - tmedia_backend_seno: v8.0.0
+  - tmedia_backend_cvitek: v8.0.0
+  - cx_lite_base: v8.0.0
+  - cx_lite_record: v8.0.0
+  - cx_lite_linkvisual: v8.0.0
+  - cx_lite_faceai: v8.0.0
+  - cvi_sensor: v8.0.0
+  - cvi_platform: v8.0.0
   
 ## 第三部分：板级信息
 # hw_info:                                 # 对 solution、board、chip 三个字段的改进，统称为 hw_info 字段

@@ -57,6 +57,7 @@ public:
     void Assign(bool     value);
     void Assign(char    *value);
     void Dump(int alignNameLen = -1);
+    string DumpToString();
 };
 
 typedef map<int, TMProperty> TMPropertyMap_t;
@@ -87,6 +88,7 @@ public:
     int Count();
     int FindDiff(vector<int> &diffIDArray, TMPropertyList *searchList);
     void Dump();
+    string DumpToString(string prefix = "");
 
 private:
     bool Find(int Id);

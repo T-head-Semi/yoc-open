@@ -138,7 +138,7 @@
         <Tools/>
       </User>
       <Compiler>
-        <Define>CONFIG_KERNEL_NONE=1;CONFIG_CSI_V2=1;CONFIG_CSI="csi2";CONFIG_SUPPORT_TSPEND=1;CONFIG_ARCH_MAINSTACK=4096;CONFIG_ARCH_INTERRUPTSTACK=4096;CONFIG_QEMU_RUN=1;CONFIG_VIC_TSPDR=274945015808;CONFIG_CPU_C906FD=1;CONFIG_SYSTICK_HZ=100;CONFIG_BOARD_SMARTH_EVB=1;CONFIG_DEBUG=1;__AOST_CPU__="C906FD";__AOST_ARCH__="riscv";__ARCH_RISCV__=1;__CPU_C906FD__=1;__AOST_VENDOR__="DUMMY";__AOST_CHIP__="CHIP_RISCV_DUMMY";__AOST_BOARD__="BOARD_RISCV_DUMMY";__AOST_ALGORITHMS_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy/nofile";__AOST_CHIP_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy";__AOST_BOARD_PATH__="/home/chj/bare_helloworld/boards/board_riscv_dummy";__AOST_SOLUTION_PATH__="/home/chj/bare_helloworld/solutions/bare_helloworld";</Define>
+        <Define>CONFIG_KERNEL_NONE=1;CONFIG_CSI_V2=1;CONFIG_CSI="csi2";CONFIG_SUPPORT_TSPEND=1;CONFIG_ARCH_MAINSTACK=4096;CONFIG_ARCH_INTERRUPTSTACK=4096;CONFIG_QEMU_RUN=1;CONFIG_VIC_TSPDR=274945015808;CONFIG_CPU_XUANTIE_C906FD=1;CONFIG_SYSTICK_HZ=100;CONFIG_BOARD_SMARTH_EVB=1;CONFIG_DEBUG=1;__AOST_CPU__="C906FD";__AOST_ARCH__="riscv";__ARCH_RISCV__=1;__CPU_C906FD__=1;__AOST_VENDOR__="DUMMY";__AOST_CHIP__="CHIP_RISCV_DUMMY";__AOST_BOARD__="BOARD_RISCV_DUMMY";__AOST_ALGORITHMS_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy/nofile";__AOST_CHIP_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy";__AOST_BOARD_PATH__="/home/chj/bare_helloworld/boards/board_riscv_dummy";__AOST_SOLUTION_PATH__="/home/chj/bare_helloworld/solutions/bare_helloworld";</Define>
         <Undefine/>
         <Optim>Optimize (-O0)</Optim>
         <DebugLevel>Default (-g)</DebugLevel>
@@ -157,7 +157,7 @@
         <Fstrict>no</Fstrict>
       </Compiler>
       <Asm>
-        <Define>CONFIG_KERNEL_NONE=1;CONFIG_CSI_V2=1;CONFIG_CSI="csi2";CONFIG_SUPPORT_TSPEND=1;CONFIG_ARCH_MAINSTACK=4096;CONFIG_ARCH_INTERRUPTSTACK=4096;CONFIG_QEMU_RUN=1;CONFIG_VIC_TSPDR=274945015808;CONFIG_CPU_C906FD=1;CONFIG_SYSTICK_HZ=100;CONFIG_BOARD_SMARTH_EVB=1;CONFIG_DEBUG=1;__AOST_CPU__="C906FD";__AOST_ARCH__="riscv";__ARCH_RISCV__=1;__CPU_C906FD__=1;__AOST_VENDOR__="DUMMY";__AOST_CHIP__="CHIP_RISCV_DUMMY";__AOST_BOARD__="BOARD_RISCV_DUMMY";__AOST_ALGORITHMS_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy/nofile";__AOST_CHIP_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy";__AOST_BOARD_PATH__="/home/chj/bare_helloworld/boards/board_riscv_dummy";__AOST_SOLUTION_PATH__="/home/chj/bare_helloworld/solutions/bare_helloworld";</Define>
+        <Define>CONFIG_KERNEL_NONE=1;CONFIG_CSI_V2=1;CONFIG_CSI="csi2";CONFIG_SUPPORT_TSPEND=1;CONFIG_ARCH_MAINSTACK=4096;CONFIG_ARCH_INTERRUPTSTACK=4096;CONFIG_QEMU_RUN=1;CONFIG_VIC_TSPDR=274945015808;CONFIG_CPU_XUANTIE_C906FD=1;CONFIG_SYSTICK_HZ=100;CONFIG_BOARD_SMARTH_EVB=1;CONFIG_DEBUG=1;__AOST_CPU__="C906FD";__AOST_ARCH__="riscv";__ARCH_RISCV__=1;__CPU_C906FD__=1;__AOST_VENDOR__="DUMMY";__AOST_CHIP__="CHIP_RISCV_DUMMY";__AOST_BOARD__="BOARD_RISCV_DUMMY";__AOST_ALGORITHMS_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy/nofile";__AOST_CHIP_PATH__="/home/chj/bare_helloworld/components/chip_riscv_dummy";__AOST_BOARD_PATH__="/home/chj/bare_helloworld/boards/board_riscv_dummy";__AOST_SOLUTION_PATH__="/home/chj/bare_helloworld/solutions/bare_helloworld";</Define>
         <Undefine/>
         <IncludePath>$(ProjectPath)/src;$(ProjectPath)/include</IncludePath>
         <OtherFlags/>

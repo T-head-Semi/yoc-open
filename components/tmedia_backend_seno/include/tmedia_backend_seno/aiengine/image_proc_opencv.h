@@ -31,6 +31,8 @@ public:
     int BatchCropResize(const TMVideoFrame &src, const TMImageInfo::ImageRect_t *crop_rect, const TMImageInfo::ImageSize_t *dst_size, TMImageInfo::PixelFormat dst_format, TMVideoFrame **dst, int count);
     int CropResize(const TMVideoFrame &src, const TMImageInfo::ImageRect_t &crop_rect, const TMImageInfo::ImageSize_t &dst_size,
                       TMImageInfo::PixelFormat dst_format, TMVideoFrame &dst) override;
+    int CvtResizeSplit(const TMVideoFrame &src, const ImageProcConfig_t *dst_config, const int dst_count, TMVideoFrame **dst) override;
+    int CvtResizeMerge(const TMVideoFrame **src, const int src_count, const TMImageInfo::ImageSize_t &dst_size, TMImageInfo::PixelFormat dst_format, TMVideoFrame &dst) override;
 };
 
 #endif  /* TM_IMAGE_PROC_OPENCV_H */

@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 /* api_dmabuf.h
  *
@@ -130,7 +144,7 @@ DMABuf_Handle_IsSame(
  * Description : Allocate buffer of requested size that used for device DMA.
  *     Requested properties of the buffer that will be allocated, including
  *     the size, start address alignment, etc. See above.
- *  Parameter ¡êo
+ *  Parameter ï¿½ï¿½o
  *  @Buffer_p (output)
  *     Pointer to the memory location where the address of the buffer will be
  *     written by this function when allocation is successful. This address
@@ -153,7 +167,7 @@ CVI_DMABuf_Status_t DMABuf_Alloc( const CVI_DMABuf_Properties_t RequestedPropert
  * Description : This function must be used to register an "alien" buffer that was allocated
  * somewhere else.
  * 
- * Parameter ¡êo
+ * Parameter ï¿½ï¿½o
  *  @ActualProperties (input)
  *     Properties that describe the buffer that is being registered.
  *  @Buffer_p (input)
@@ -191,7 +205,7 @@ CVI_DMABuf_Status_t DMABuf_Register(const CVI_DMABuf_Properties_t ActualProperti
  * DMABuf_Register, meaning it must not be used anymore.
  * If the buffer was allocated through DMABuf_Alloc, this function will also
  * free the buffer, meaning it must not be accessed anymore.
- * Parameter ¡êo
+ * Parameter ï¿½ï¿½o
  *  @Handle (input)
  *     The handle that may be released.
  *

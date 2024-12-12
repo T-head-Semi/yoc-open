@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2015-2017 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <reent.h>
@@ -284,6 +298,7 @@ int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
     }
 #ifdef AOS_COMP_VFS
     aos_stat_t stat;
+    memset(&stat, 0, sizeof(aos_stat_t));
     ret = aos_stat(file, &stat);
     LIBC_CHECK_AOS_RET(ret);
     pstat->st_mode  = stat.st_mode;

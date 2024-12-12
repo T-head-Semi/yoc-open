@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2019-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef AOS_KERNEL_H
@@ -69,8 +83,17 @@ typedef void* aos_sem_t;
 typedef void* aos_queue_t;
 typedef void* aos_timer_t;
 typedef void* aos_work_t;
+
 typedef void* aos_event_t;
-typedef void* aos_spinlock_t;
+#ifdef CONFIG_KERNEL_RTTHREAD
+typedef struct {
+	char reserve[AOS_RTT_SPIN_LOCK_STRUCT_SIZE];
+} aos_spinlock_t;
+#else
+typedef struct {
+	char reserve[8];
+} aos_spinlock_t;
+#endif
 
 typedef struct {
     void *hdl;
@@ -522,69 +545,6 @@ int aos_sem_is_valid(aos_sem_t *sem);
  * @param[in]  sem  semaphore object, it contains kernel obj pointer which aos_sem_new alloced.
  */
 void aos_sem_signal_all(aos_sem_t *sem);
-
-/**
- * Alloc a semaphore for specified task.
- *
- * @param[in]   task   task handle.
- *
- * @param[out]  sem    pointer of semaphore object, semaphore object must be alloced,
- *                     hdl pointer in aos_sem_t will refer a kernel obj internally.
- * 
- * @param[in]   name   the name of the semaphore
- * 
- * @param[in]   count  initial semaphore counter.
- *
- * @return  0:success.
- */
-int aos_task_sem_new(aos_task_t *task, aos_sem_t *sem, const char *name, int count);
-
-/**
- * Free a semaphore for specified task.
- *
- * @param[in]   task   task handle.
- *
- * @return  0:success.
- */
-int aos_task_sem_free(aos_task_t *task);
-
-/**
- * Release a semaphore for specified task.
- *
- * @param[in]  task   task handle.
- */
-void aos_task_sem_signal(aos_task_t *task);
-
-/**
- * Acquire a semaphore int the current task.
- *
- * @param[in]  timeout  waiting until timeout in milliseconds.
- *
- * @return  0: success.
- */
-int aos_task_sem_wait(unsigned int timeout);
-
-/**
- * Set semaphore count for specified task.
- *
- * @param[in]   task   task handle.
- * 
- * @param[in]   count  the semaphore counter.
- *
- * @return  0:success.
- */
-int aos_task_sem_count_set(aos_task_t *task, int count);
-
-/**
- * Get semaphore count for specified task.
- *
- * @param[in]   task   task handle.
- * 
- * @param[in]   count  point to the semaphore counter.
- *
- * @return  0:success.
- */
-int aos_task_sem_count_get(aos_task_t *task, int *count);
 
 /**
  * This function will create an event with an initialization flag set.

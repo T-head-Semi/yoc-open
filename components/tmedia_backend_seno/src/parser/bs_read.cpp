@@ -70,7 +70,7 @@ int bs_read_ue(bs_t *s)
 {
     int i = 0;
 
-    while (bs_read1(s)==0 && (s->p < s->p_end) && (i<32)) {
+    while (bs_read1(s)==0 && (s->p < s->p_end) && (i<31)) {
         i++;
     }
     return ((1 << i) - 1 + bs_read(s, i));

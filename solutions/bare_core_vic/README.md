@@ -2,6 +2,10 @@
 
 `bare_core_vic` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁cpu中断控制器使用示例，可运行在QEMU环境
 
+该示例可演示中断嵌套等功能的使用。示例中开启了两个不同优先级的定时器，对于支持中断嵌套的玄铁处理器，高优先级的定时器中断会抢占低优先中断。
+
+注意：中断嵌套功能当前仅支持玄铁E9xx处理器和R908 clic模式。
+
 # 基于Linux编译运行
 
 ## 编译
@@ -11,8 +15,8 @@
 ```
 - cpu: <br />
         e902 e902m e902t e902mt e906 e906f e906fd e906p e906fp e906fdp e907 e907f e907fd e907p e907fp e907fdp <br />
-        r910 r920 <br />
-        c906 c906fd c906fdv c908 c908v c908i c910 c910v2 c920 c920v2 <br />
+        r910 r920 r908 r908fd r908fdv r908-cp r908fd-cp r908fdv-cp <br />
+        c906 c906fd c906fdv c908 c908v c908i c910 c910v2 c910v3 c910v3-cp c920 c920v2 c920v3 c920v3-cp <br />
         c907 c907fd c907fdv c907fdvm c907-rv32 c907fd-rv32 c907fdv-rv32 c907fdvm-rv32
 - platform: <br />
         smartl xiaohui

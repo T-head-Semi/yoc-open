@@ -1,6 +1,6 @@
 ##
 name: cvi_mmf_sdk_cv181xx
-version: v7.9.1
+version: v8.0.0
 description: Cvitek cvi_mmf_sdk_cv181xx library.
 type: common
 keywords:

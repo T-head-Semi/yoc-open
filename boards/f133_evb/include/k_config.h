@@ -22,10 +22,10 @@
 #if defined (__CSKY_DSP__) || defined(__CSKY_DSPV2__) || defined(__CSKY_VDSPV2__) || defined (__CSKY_HARD_FLOAT__) || defined(__C807__)
 #define CSK_CPU_STACK_EXTRAL    88
 #define RHINO_CONFIG_MM_MAXMSIZEBIT 27
-#elif defined(__I805__) || defined(CONFIG_CPU_E906) || defined(CONFIG_CPU_E906F) || defined(CONFIG_CPU_E906FD)
+#elif defined(__I805__) || defined(CONFIG_CPU_XUANTIE_E906) || defined(CONFIG_CPU_XUANTIE_E906F) || defined(CONFIG_CPU_XUANTIE_E906FD)
 #define CSK_CPU_STACK_EXTRAL    280
 #define RHINO_CONFIG_MM_MAXMSIZEBIT 28
-#elif defined(CONFIG_CPU_C906FDV)
+#elif defined(CONFIG_CPU_XUANTIE_C906FDV)
 #ifdef __riscv_vector
 #define CSK_CPU_STACK_EXTRAL    (280 + 512 + 40)
 #else

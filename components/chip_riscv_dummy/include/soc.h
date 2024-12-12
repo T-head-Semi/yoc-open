@@ -1,5 +1,19 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef _SOC_H_
@@ -207,7 +221,11 @@ typedef enum {
     PIN_FUNC_END                   =  0xFFFFFFFFU
 } pin_func_t;
 
+#if CONFIG_INTC_CLIC_PLIC
+#define CONFIG_IRQ_NUM              (64U + PLIC_IRQ_OFFSET)
+#else
 #define CONFIG_IRQ_NUM              64U
+#endif
 
 ///< AHB
 #define SPIFLASH_BASE               0x18000000UL
@@ -215,7 +233,7 @@ typedef enum {
 #define SRAM_BASE                   0x20000000UL
 #define SRAM_SIZE                   0x20000U
 
-#if CONFIG_CPU_E9XX
+#if CONFIG_CPU_XUANTIE_E9XX
 
 typedef enum {
     User_Software_IRQn             =  0U,      /* User software interrupt */
@@ -251,24 +269,37 @@ typedef enum {
 
 /* -------------------------  Interrupt Number Definition  ------------------------ */
 
-#define Supervisor_Software_IRQn    (1)
-#define Machine_Software_IRQn       (3)
-#define Supervisor_Timer_IRQn       (5)
-#define CORET_IRQn                  (7)
-#define Supervisor_External_IRQn    (9)
-#define Machine_External_IRQn       (11)
-#define L1_CACHE_ECC_IRQn           (16)
+#define Supervisor_Software_IRQn    (1U)
+#define Machine_Software_IRQn       (3U)
+#define Supervisor_Timer_IRQn       (5U)
+#define CORET_IRQn                  (7U)
+#define Supervisor_External_IRQn    (9U)
+#define Machine_External_IRQn       (11U)
+#define L1_CACHE_ECC_IRQn           (16U)
 
 #if CONFIG_BOARD_XIAOHUI_EVB
+
+#if CONFIG_INTC_CLIC_PLIC
+typedef enum IRQn {
+    L2_CACHE_ECC_IRQn               =   1U       + PLIC_IRQ_OFFSET,  /* l2 cache ecc Interrupt */
+
+    DW_UART0_IRQn                   =   20U      + PLIC_IRQ_OFFSET,  /* uart Interrupt */
+    TIM0_IRQn                       =   25U,                         /* timer0 Interrupt for CLIC*/
+    TIM1_IRQn                       =   26U,                         /* timer1 Interrupt for CLIC*/
+    TIM2_IRQn                       =   27U      + PLIC_IRQ_OFFSET,  /* timer2 Interrupt */
+    END_IRQn                        =   1024U    + PLIC_IRQ_OFFSET
+} irqn_type_t;
+#else
 /* extern irq number, 1-16 are reserved for inner-cpu */
 typedef enum IRQn {
-    L2_CACHE_ECC_IRQn               =   1,      /* l2 cache ecc Interrupt */
+    L2_CACHE_ECC_IRQn               =   1U,      /* l2 cache ecc Interrupt */
 
-    DW_UART0_IRQn                   =   20,     /* uart Interrupt */
-    TIM0_IRQn                       =   25,     /* timer0 Interrupt */
-    TIM1_IRQn                       =   26,     /* timer1 Interrupt */
-    TIM2_IRQn                       =   27,     /* timer2 Interrupt */
+    DW_UART0_IRQn                   =   20U,     /* uart Interrupt */
+    TIM0_IRQn                       =   25U,     /* timer0 Interrupt */
+    TIM1_IRQn                       =   26U,     /* timer1 Interrupt */
+    TIM2_IRQn                       =   27U,     /* timer2 Interrupt */
 } irqn_type_t;
+#endif /* CONFIG_INTC_CLIC_PLIC */
 
 #define DW_UART0_BASE              (0x1900d000UL)
 #define DW_TIMER0_BASE             (0x19001000UL)
@@ -277,7 +308,7 @@ typedef enum IRQn {
 
 #else
 #error  "Not support soc!!!"
-#endif
+#endif /* CONFIG_BOARD_XIAOHUI_EVB */
 
 #endif /* end exx*/
 

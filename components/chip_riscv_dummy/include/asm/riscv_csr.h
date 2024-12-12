@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2018-2024 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -55,7 +69,7 @@
 #define SR_FS_CLEAN     0x00004000UL
 #define SR_FS_DIRTY     0x00006000UL
 
-#if CONFIG_CPU_C906 || CONFIG_CPU_C906FD || CONFIG_CPU_C906FDV || CONFIG_CPU_C910 || CONFIG_CPU_C920
+#if CONFIG_CPU_XUANTIE_C906 || CONFIG_CPU_XUANTIE_C906FD || CONFIG_CPU_XUANTIE_C906FDV || CONFIG_CPU_XUANTIE_C910 || CONFIG_CPU_XUANTIE_C920 || CONFIG_CPU_XUANTIE_R920
 #define SR_VS          0x01800000
 #define SR_VS_OFF      0x00000000
 #define SR_VS_INITIAL  0x00800000
@@ -114,7 +128,7 @@
 #define MSTATUS_MPP_SHIFT               11
 #define MSTATUS_MPP                     (3 << MSTATUS_MPP_SHIFT)
 
-#if CONFIG_CPU_C906 || CONFIG_CPU_C906FD || CONFIG_CPU_C906FDV || CONFIG_CPU_C910 || CONFIG_CPU_C920
+#if CONFIG_CPU_XUANTIE_C906 || CONFIG_CPU_XUANTIE_C906FD || CONFIG_CPU_XUANTIE_C906FDV || CONFIG_CPU_XUANTIE_C910 || CONFIG_CPU_XUANTIE_C920 || CONFIG_CPU_XUANTIE_R920
 #define MSTATUS_VS_SHIFT                23
 #else
 #define MSTATUS_VS_SHIFT                9
@@ -124,7 +138,7 @@
 
 #define INSERT_FIELD(val, which, fieldval)	(((val) & ~(which)) | ((fieldval) * ((which) & ~((which)-1))))
 
-#if CONFIG_CPU_C906 || CONFIG_CPU_C906FD || CONFIG_CPU_C906FDV || CONFIG_CPU_C910 || CONFIG_CPU_C920 || CONFIG_CPU_C908 || CONFIG_CPU_C908V ||CONFIG_CPU_C908I
+#if CONFIG_CPU_XUANTIE_C906 || CONFIG_CPU_XUANTIE_C906FD || CONFIG_CPU_XUANTIE_C906FDV || CONFIG_CPU_XUANTIE_C910 || CONFIG_CPU_XUANTIE_C920 || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V ||CONFIG_CPU_XUANTIE_C908I
 #define ATTR_SO                 (1ull << 4)
 #define ATTR_CA                 (1ull << 3)
 #define ATTR_BU                 (1ull << 2)

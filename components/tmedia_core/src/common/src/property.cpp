@@ -136,6 +136,37 @@ void TMProperty::Dump(int alignNameLen)
     }
 }
 
+string TMProperty::DumpToString()
+{
+    string ret;
+    if (Name.empty()) {
+        ret += "id(" + to_string(Id) + ")=";
+    } else {
+        ret = Name + "=";
+    }
+
+    switch (Type)
+    {
+    case PropertyType::INT32:
+        ret += to_string(Value.Int);
+        break;
+    case PropertyType::UINT32:
+        ret += to_string(Value.Uint);
+        break;
+    case PropertyType::BOOLEAN:
+        ret += (Value.Bool ? "True" : "False");
+        break;
+    case PropertyType::STRING:
+        ret += Value.String;
+        break;
+    default:
+        ret += "Unknown";
+        break;
+    }
+
+    return ret;
+}
+
 int TMPropertyList::Add(TMProperty property)
 {
     if (Find(property.Id))
@@ -196,6 +227,9 @@ int TMPropertyList::FindDiff(vector<int> &diffIDArray, TMPropertyList *searchLis
         else
         {
             TMProperty *findProp = &(find_iter->second);
+            if (searchProp->Name.empty()) {
+                searchProp->Name = findProp->Name;
+            }
 
             switch (findProp->Type)
             {
@@ -252,5 +286,20 @@ void TMPropertyList::Dump()
         property = &iter->second;
         property->Dump(maxNameLen);
     }
+}
+
+string TMPropertyList::DumpToString(string prefix) {
+    string ret = prefix;
+    TMProperty *property;
+
+    for (auto iter = mProperties.begin(); iter != mProperties.end(); iter++)
+    {
+        property = &iter->second;
+        ret += property->DumpToString() + ",";
+    }
+
+    ret.pop_back();
+
+    return ret;
 }
 

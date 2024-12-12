@@ -2,6 +2,10 @@
 
 `bare_core_matrix` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁cpu matrix使用示例，可运行在QEMU环境。
 
+用户可参考matrix汇编相关代码实现其他功能。
+
+注意：该示例仅支持玄铁处理器带matrix扩展的型号上编译运行
+
 # 基于Linux编译运行
 
 ## 编译

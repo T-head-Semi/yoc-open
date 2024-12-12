@@ -30,6 +30,14 @@ public:
         QPMAP,  // QP with map                      for: h264, h265
     };
 
+    typedef struct
+    {
+        TMImageInfo::ImageRect_t rect;
+        bool enable;
+        bool abs;   /* true or false; QP mode of an ROI. false: relative QP. true: absolute QP.*/
+        int qp;     /* Range:[-51, 51]; QP value,only relative mode can QP value less than 0. */
+    } EncodeRoiConfig_t;
+
     TMVideoEncoder();
     virtual ~TMVideoEncoder();
 
@@ -45,6 +53,7 @@ public:
     // TMVideoEncoder extend interface
     virtual int SendFrame(TMVideoFrame &frame, int timeout) = 0;
     virtual int RecvPacket(TMVideoPacket &pkt, int timeout) = 0;
+    virtual int SetRoiArea(EncodeRoiConfig_t *config, int count) { return TMResult::TM_NOT_SUPPORT; }
 };
 
 class TMAudioEncoder : public TMCodec, public TMFilterEntity

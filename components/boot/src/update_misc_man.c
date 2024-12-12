@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2019-2020 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #if (CONFIG_NO_OTA_UPGRADE == 0)
 #include <stdlib.h>
@@ -677,7 +691,7 @@ int misc_update_path(unsigned long bm_addr, img_info_t *img_update, uint32_t typ
             }
 
             if (get_section_buf(img_update->img_addr, img_update->img_size, &tmp_scn_type, &tmp_size, img_update)) {
-                UPD_LOGE("e got mate info%.*s scntype:%d", MTB_IMAGE_NAME_SIZE, img_update->img_name, (*(uint32_t *)&tmp_scn_type));
+                UPD_LOGE("e got mate info%.*s scntype.father_type:%d scntype.son_type:%d", MTB_IMAGE_NAME_SIZE, img_update->img_name, tmp_scn_type.father_type.extend_type | (tmp_scn_type.father_type.first_type << 4), tmp_scn_type.son_type);
                 return -1;
             }
 
@@ -720,7 +734,7 @@ int misc_update_path(unsigned long bm_addr, img_info_t *img_update, uint32_t typ
                 return -1;
             }
             if (get_section_buf(img_update->img_addr, img_update->img_size, &tmp_scn_type, &tmp_size, img_update)) {
-                UPD_LOGE("e got mate info%.*s scntype:%d", MTB_IMAGE_NAME_SIZE, img_update->img_name, (*(uint32_t *)&tmp_scn_type));
+                UPD_LOGE("e got mate info%.*s scntype.father_type:%d scntype.son_type:%d", MTB_IMAGE_NAME_SIZE, img_update->img_name, tmp_scn_type.father_type.extend_type | (tmp_scn_type.father_type.first_type << 4), tmp_scn_type.son_type);
                 return -1;
             }
             UPD_LOGD("update mate info img_update->img_addr:%x-img_name:%.*s-img_size:%d",

@@ -40,8 +40,10 @@ static const char *relative_path(const char *path, const char *dir)
 {
     const char *p = path + strlen(dir);
 
-    while (*p == '/')
-        p++;
+    if (*p != '/') {
+        return NULL;
+    }
+    p++;
     return p < path + strlen(path) ? p : NULL;
 }
 

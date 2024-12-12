@@ -87,7 +87,7 @@ typedef struct spi_dma
 
 typedef struct sunxi_spi
 {
-    int8_t result : 2;
+    volatile int8_t result : 2;
 #define SPI_XFER_READY 0
 #define SPI_XFER_OK 1
 #define SPI_XFER_FAILED -1

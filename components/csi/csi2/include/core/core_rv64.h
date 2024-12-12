@@ -1,5 +1,19 @@
-/*
- * Copyright (C) 2017-2019 Alibaba Group Holding Limited
+ /*
+ * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -139,15 +153,69 @@ extern "C" {
   @{
  */
 
+#if CONFIG_INTC_CLIC_PLIC
 /**
-  \ingroup    CSI_core_register
-  \defgroup   CSI_CLINT Core-Local Interrupt Controller (CLINT)
-  \brief      Type definitions for the CLINT Registers
-  @{
+  \brief Access to the structure of a CLIC vector interrupt controller.
  */
+typedef struct {
+    __IOM uint8_t IP;           /*!< Offset: 0x000 (R/W)  Interrupt set pending register */
+    __IOM uint8_t IE;           /*!< Offset: 0x004 (R/W)  Interrupt set enable register */
+    __IOM uint8_t ATTR;         /*!< Offset: 0x008 (R/W)  Interrupt set attribute register */
+    __IOM uint8_t CTL;          /*!< Offset: 0x00C (R/W)  Interrupt control register */
+} CLIC_INT_Control;
+
+typedef struct {
+    __IOM uint32_t CLICCFG:8;                 /*!< Offset: 0x000 (R/W)  CLIC configure register */
+    __IM  uint32_t CLICINFO;
+    __IOM uint32_t MINTTHRESH;
+    uint32_t RESERVED[1021];
+    CLIC_INT_Control CLICINT[4096];
+} CLIC_Type;
+
+#define CLIC_INFO_CLICINTCTLBITS_Pos           21U
+#define CLIC_INFO_CLICINTCTLBITS_Msk           (0xFUL << CLIC_INFO_CLICINTCTLBITS_Pos)
+
+#define CLIC_INTIP_IP_Pos                      0U                                    /*!< CLIC INTIP: IP Position */
+#define CLIC_INTIP_IP_Msk                      (0x1UL << CLIC_INTIP_IP_Pos)          /*!< CLIC INTIP: IP Mask */
+
+#define CLIC_INTIE_IE_Pos                      0U                                    /*!< CLIC INTIE: IE Position */
+#define CLIC_INTIE_IE_Msk                      (0x1UL << CLIC_INTIE_IE_Pos)          /*!< CLIC INTIE: IE Mask */
+
+#define CLIC_INTIE_T_Pos                       7U                                    /*!< CLIC INTIE: T Position */
+#define CLIC_INTIE_T_Msk                       (0x1UL << CLIC_INTIE_T_Pos)           /*!< CLIC INTIE: T Mask */
+
+#define CLIC_INTATTR_TRIG_Pos                  1U                                    /*!< CLIC INTATTR: TRIG Position */
+#define CLIC_INTATTR_TRIG_Msk                  (0x3UL << CLIC_INTATTR_TRIG_Pos)      /*!< CLIC INTATTR: TRIG Mask */
+
+#define CLIC_INTATTR_SHV_Pos                   0U                                    /*!< CLIC INTATTR: SHV Position */
+#define CLIC_INTATTR_SHV_Msk                   (0x1UL << CLIC_INTATTR_SHV_Pos)       /*!< CLIC INTATTR: SHV Mask */
+
+#define CLIC_INTCFG_NVBIT_Pos                  5U                                    /*!< CLIC INTCFG: NVBIT Position */
+#define CLIC_INTCFG_NVBIT_Msk                  (0x1UL << CLIC_INTCFG_NVBIT_Pos)      /*!< CLIC INTCFG: NVBIT Mask */
+
+#define CLIC_INTCFG_PRIO_Pos                   5U                                    /*!< CLIC INTCFG: INTCFG Position */
+#define CLIC_INTCFG_PRIO_Msk                   (0x7UL << CLIC_INTCFG_PRIO_Pos)       /*!< CLIC INTCFG: INTCFG Mask */
+
+#define CLIC_CLICCFG_NVBIT_Pos                 0U                                    /*!< CLIC CLICCFG: NVBIT Position */
+#define CLIC_CLICCFG_NVBIT_Msk                 (0x1UL << CLIC_CLICCFG_NVBIT_Pos)     /*!< CLIC CLICCFG: NVBIT Mask */
+
+#define CLIC_CLICCFG_NLBIT_Pos                 1U                                    /*!< CLIC CLICCFG: NLBIT Position */
+#define CLIC_CLICCFG_NLBIT_Msk                 (0xFUL << CLIC_CLICCFG_NLBIT_Pos)     /*!< CLIC CLICCFG: NLBIT Mask */
+
+#define CLIC_CLICCFG_NMBIT_Pos                 5U                                    /*!< CLIC CLICCFG: NMBIT Position */
+#define CLIC_CLICCFG_NMBIT_Msk                 (0x3UL << CLIC_CLICCFG_NMBIT_Pos)     /*!< CLIC CLICCFG: NMBIT Mask */
+
+#if defined(CONFIG_CLIC_BASE)
+#define CLIC                       ((CLIC_Type *)CONFIG_CLIC_BASE)       /*!< CLIC configuration struct */
+#else
+#error "CONFIG_CLIC_BASE is not defined!"
+#endif /* end CONFIG_CLIC_BASE */
+
+#endif /* CONFIG_INTC_CLIC_PLIC */
+
 
 /**
-  \brief Access to the structure of a vector interrupt controller.
+  \brief Access to the structure of a PLIC vector interrupt controller.
  */
 
 typedef struct {
@@ -297,15 +365,72 @@ typedef struct {
 #define CACHE_MHCR_IE_Pos                      0U                                            /*!< CACHE MHCR: IE Position */
 #define CACHE_MHCR_IE_Msk                      (0x1UL << CACHE_MHCR_IE_Pos)                  /*!< CACHE MHCR: IE Mask */
 
+#if CONFIG_CPU_XUANTIE_R908 || CONFIG_CPU_XUANTIE_R908FD || CONFIG_CPU_XUANTIE_R908FDV \
+    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP
+#define MCER_ECC_FATAL_Pos           34U
+#define MCER_ECC_FATAL_Msk           (0x1ULL << MCER_ECC_FATAL_Pos)
+
+#define MCER_ECC_VLD_Pos             35U
+#define MCER_ECC_VLD_Msk             (0x1ULL << MCER_ECC_VLD_Pos)
+
+#define MCER_RAMID_Pos               25U
+#define MCER_RAMID_Msk               (0x7ULL << MCER_RAMID_Pos)
+#else
+#define MCER_ECC_FATAL_Pos           30U
+#define MCER_ECC_FATAL_Msk           (0x1ULL << MCER_ECC_FATAL_Pos)
+#define MCER_ECC_VLD_Pos             31U
+#define MCER_ECC_VLD_Msk             (0x1ULL << MCER_ECC_VLD_Pos)
+#define MCER_RAMID_Pos               21U
+#define MCER_RAMID_Msk               (0x7ULL << MCER_RAMID_Pos)
+#endif
+
+#define CACHE_MCER2_ECC_FATAL_Pos              62U
+#define CACHE_MCER2_ECC_FATAL_Msk              (0x1ULL << CACHE_MCER2_ECC_FATAL_Pos)
+
+#define CACHE_MCER2H_ECC_FATAL_Pos             30U
+#define CACHE_MCER2H_ECC_FATAL_Msk             (0x1ULL << CACHE_MCER2H_ECC_FATAL_Pos)
+
+#define CACHE_MCER2_ECC_VLD_Pos                63U
+#define CACHE_MCER2_ECC_VLD_Msk                (0x1ULL << CACHE_MCER2_ECC_VLD_Pos)
+
+#define CACHE_MCER2H_ECC_VLD_Pos               31U
+#define CACHE_MCER2H_ECC_VLD_Msk               (0x1ULL << CACHE_MCER2H_ECC_VLD_Pos)
+
+#define CACHE_MCER2_RAMID_Pos                  53U
+#define CACHE_MCER2_RAMID_Msk                  (0x3ULL << CACHE_MCER2_RAMID_Pos)
+
+#define CACHE_MCER2H_RAMID_Pos                 21U
+#define CACHE_MCER2H_RAMID_Msk                 (0x3ULL << CACHE_MCER2H_RAMID_Pos)
+
 #define CACHE_INV_ADDR_Pos                     6U
-#define CACHE_INV_ADDR_Msk                     (0xFFFFFFFFUL << CACHE_INV_ADDR_Pos)
+#define CACHE_INV_ADDR_Msk                     (0xFFFFFFFFULL << CACHE_INV_ADDR_Pos)
+
+enum MCER_FAULT_RAMID {
+    /* L1 Cache, JTLB and TCM (RAMID of MCER)*/
+    MCER_FAULT_RAMID_L1_ICACHE_TAG = 0,
+    MCER_FAULT_RAMID_L1_ICACHE_DATA,
+    MCER_FAULT_RAMID_L1_DCACHE_TAG,
+    MCER_FAULT_RAMID_L1_DCACHE_DATA,
+    MCER_FAULT_RAMID_JTLB_TAG,
+    MCER_FAULT_RAMID_JTLB_DATA,
+    MCER_FAULT_RAMID_DTCM,
+    MCER_FAULT_RAMID_ITCM
+};
+
+enum MCER2_FAULT_RAMID {
+    MCER2_FAULT_RAMID_L2_CACHE_TAG = 0,
+    MCER2_FAULT_RAMID_L2_CACHE_DATA,
+    MCER2_FAULT_RAMID_L2_CACHE_DIRTY
+};
 
 /*@} end of group CSI_CACHE */
 
 // MSTATUS Register
 #define MSTATUS_TVM_MASK (1L << 20)     // mstatus.TVM                      [20]
 #define MSTATUS_MPP_MASK (3L << 11)     // mstatus.SPP                      [11:12]
+#ifndef MSTATUS_MPP_M
 #define MSTATUS_MPP_M    (3L << 11)     // Machine mode                     11
+#endif
 #define MSTATUS_MPP_S    (1L << 11)     // Supervisor mode                  01
 #define MSTATUS_MPP_U    (0L << 11)     // User mode                        00
 
@@ -337,6 +462,10 @@ __STATIC_INLINE int csi_get_cpu_work_mode(void)
 __STATIC_INLINE int csi_get_cpu_id(void)
 {
     unsigned long result;
+
+#if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
+    return 0;
+#endif
     __ASM volatile("csrr %0, mhartid" : "=r"(result) : : "memory");
     return result;
 }
@@ -375,7 +504,9 @@ typedef struct {
     __IOM uint32_t MTIMECMPH2;
     __IOM uint32_t MTIMECMPL3;
     __IOM uint32_t MTIMECMPH3;
-    uint32_t RESERVED1[(0x400C000 - 0x400401C) / 4 - 1];
+    uint32_t RESERVED1[(0x400BFF8 - 0x400401C) / 4 - 1];
+    __IOM uint32_t MTIMEL;
+    __IOM uint32_t MTIMEH;
     __IOM uint32_t SSIP0;
     __IOM uint32_t SSIP1;
     __IOM uint32_t SSIP2;
@@ -389,6 +520,9 @@ typedef struct {
     __IOM uint32_t STIMECMPH2;
     __IOM uint32_t STIMECMPL3;
     __IOM uint32_t STIMECMPH3;
+    uint32_t RESERVED3[(0x400FFF8 - 0x400D01C) / 4 - 1];
+    __IOM uint32_t STIMEL;
+    __IOM uint32_t STIMEH;
 } CLINT_Type;
 
 typedef struct {
@@ -479,6 +613,15 @@ __STATIC_INLINE void csi_vic_enable_irq(int32_t IRQn)
     int hartid = csi_get_cpu_id();
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        CLIC->CLICINT[IRQn].IE |= CLIC_INTIE_IE_Msk;
+        __DSB();
+        return;
+    }
+#endif
 #if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
     PLIC_Hn_MSIE_VAL(&plic->PLIC_H0_SIE[IRQn/32], hartid) = PLIC_Hn_MSIE_VAL(&plic->PLIC_H0_SIE[IRQn/32], hartid) | (0x1 << (IRQn%32));
 #else
@@ -514,6 +657,15 @@ __STATIC_INLINE void csi_vic_disable_irq(int32_t IRQn)
     int hartid = csi_get_cpu_id();
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        CLIC->CLICINT[IRQn].IE &= ~CLIC_INTIE_IE_Msk;
+        __DSB();
+        return;
+    }
+#endif
 #if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
     PLIC_Hn_MSIE_VAL(&plic->PLIC_H0_SIE[IRQn/32], hartid) = PLIC_Hn_MSIE_VAL(&plic->PLIC_H0_SIE[IRQn/32], hartid) & (~(0x1 << (IRQn%32)));
 #else
@@ -551,6 +703,13 @@ __STATIC_INLINE uint32_t csi_vic_get_enabled_irq(int32_t IRQn)
     int hartid = csi_get_cpu_id();
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        return (uint32_t)(CLIC->CLICINT[IRQn].IE & CLIC_INTIE_IE_Msk);
+    }
+#endif
 #if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
     return (uint32_t)((PLIC_Hn_MSIE_VAL(&plic->PLIC_H0_SIE[IRQn/32], hartid) >> IRQn%32) & 0x1);
 #else
@@ -587,6 +746,13 @@ __STATIC_INLINE uint32_t csi_plic_get_enabled_irq(unsigned long plic_base, int32
 __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        return (uint32_t)(CLIC->CLICINT[IRQn].IP & CLIC_INTIP_IP_Msk);
+    }
+#endif
     return (uint32_t)((plic->PLIC_IP[IRQn/32] >> IRQn%32) & 0x1);
 }
 
@@ -598,6 +764,14 @@ __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
 __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        CLIC->CLICINT[IRQn].IP |= CLIC_INTIP_IP_Msk;
+        return;
+    }
+#endif
     plic->PLIC_IP[IRQn/32] = plic->PLIC_IP[IRQn/32] | (0x1 << (IRQn%32));
 }
 
@@ -609,6 +783,14 @@ __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
 __STATIC_INLINE void csi_vic_clear_pending_irq(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        CLIC->CLICINT[IRQn].IP &= ~CLIC_INTIP_IP_Msk;
+        return;
+    }
+#endif
     plic->PLIC_H0_SCLAIM = IRQn;
 }
 
@@ -657,6 +839,16 @@ __STATIC_INLINE void csi_plic_clear_pending_irq(unsigned long plic_base, int32_t
 __STATIC_INLINE void csi_vic_set_prio(int32_t IRQn, uint32_t priority)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        uint8_t nlbits = (CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos;
+        CLIC->CLICINT[IRQn].CTL = (CLIC->CLICINT[IRQn].CTL & (~CLIC_INTCFG_PRIO_Msk)) | (priority << (8 - nlbits));
+        __DSB();
+        return;
+    }
+#endif
     plic->PLIC_PRIO[IRQn - 1] = priority;
 }
 
@@ -672,6 +864,14 @@ __STATIC_INLINE void csi_vic_set_prio(int32_t IRQn, uint32_t priority)
 __STATIC_INLINE uint32_t csi_vic_get_prio(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
+#if CONFIG_INTC_CLIC_PLIC
+    if (IRQn > PLIC_IRQ_OFFSET) {
+        IRQn -= PLIC_IRQ_OFFSET;
+    } else {
+        uint8_t nlbits = (CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos;
+        return CLIC->CLICINT[IRQn].CTL >> (8 - nlbits);
+    }
+#endif
     uint32_t prio = plic->PLIC_PRIO[IRQn - 1];
     return prio;
 }
@@ -778,7 +978,7 @@ __STATIC_INLINE void csi_mpu_disable_region(uint32_t idx)
   @{
  */
 
-#define CLINT_TIMECMPn_ADDR(time_cmp_base, hartid)  ((unsigned long)(time_cmp_base) + 4 * (hartid))
+#define CLINT_TIMECMPn_ADDR(time_cmp_base, hartid)  ((unsigned long)(time_cmp_base) + 8 * (hartid))
 #define CLINT_TIMECMPn_VAL(time_cmp_base, hartid)   (*(__IOM uint32_t *)(CLINT_TIMECMPn_ADDR(time_cmp_base, hartid)))
 
 __STATIC_INLINE uint32_t _csi_clint_config2(unsigned long coret_base, uint16_t hartid, uint32_t ticks, int32_t IRQn)
@@ -965,7 +1165,12 @@ __STATIC_INLINE uint64_t csi_coret_get_value2()
  */
 __ALWAYS_STATIC_INLINE void csi_coret_irq_enable(void)
 {
+#if CONFIG_INTC_CLIC_PLIC
+    extern void soc_irq_enable(uint32_t irq_num);
+    return soc_irq_enable(7);
+#else
     return __enable_coret_irq();
+#endif
 }
 
 /**
@@ -973,7 +1178,12 @@ __ALWAYS_STATIC_INLINE void csi_coret_irq_enable(void)
  */
 __ALWAYS_STATIC_INLINE void csi_coret_irq_disable(void)
 {
+#if CONFIG_INTC_CLIC_PLIC
+    extern void soc_irq_disable(uint32_t irq_num);
+    return soc_irq_disable(7);
+#else
     return __disable_coret_irq();
+#endif
 }
 
 
@@ -1292,6 +1502,73 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range(unsigned long *addr, size_t 
 
 /*@} end of CSI_Core_CacheFunctions */
 
+/* ##########################  FPP functions  #################################### */
+/**
+  \ingroup  CSI_Core_FPPFunctionInterface
+  \defgroup CSI_Core_FPPFunctions FPP Functions
+  \brief    Functions that configure FPP.
+  @{
+ */
+
+/**
+ \ingroup    CSI_fpp_register
+ \defgroup   CSI_FPP
+ \brief      Type definitions for the FPP Registers
+ @{
+ */
+
+/**
+ \brief  Consortium definition for Machine Mode FPP Configuration register(MFPPCR, 0xBC0).
+ */
+typedef union {
+    struct {
+        uint64_t EN: 1;                          /*!< bit:     0       FPP enable */
+        uint64_t _reversed1: 11;                 /*!< bit:     1  11   Reserved */
+        uint64_t Base_Address: 52;               /*!< bit:    12  63   Base Address */
+    } b;                                         /*!< Structure        Access by bit */
+    uint64_t w;                                  /*!< Type             Access by whole register */
+} MFPPCR_Type;
+
+#define MFPPCR_Base_Address_Pos          12U                                                 /*!< MFPPCR: Base_Address Position */
+#define MFPPCR_Base_Address_Msk          (0xFFFFFFFFFFFFFULL << MFPPCR_Base_Address_Pos)     /*!< MFPPCR: Base_Address Mask */
+
+#define MFPPCR_Base_EN_Pos               0U                                                  /*!< MFPPCR: Enable Bit Position */
+#define MFPPCR_Base_EN_Msk               (0x1U << MFPPCR_Base_EN_Pos)                        /*!< MFPPCR: Enable Bit Mask */
+
+/*@} end of group CSI_FPP_bitfield */
+
+/**
+  \brief   Enable FPP
+  \details Turns on FPP
+  */
+__STATIC_INLINE void csi_fpp_enable(void)
+{
+    __set_MFPPCR(__get_MFPPCR() | MFPPCR_Base_EN_Msk);
+}
+
+/**
+  \brief   Disable FPP
+  \details Turns off FPP
+  */
+__STATIC_INLINE void csi_fpp_disable(void)
+{
+    __set_MFPPCR(__get_MFPPCR() & (~MFPPCR_Base_EN_Msk));
+}
+
+/**
+  \brief   Set FPP Base Address
+  \details Set FPP Base Address
+  \param [in]  base_addr  FPP Base Address.
+  */
+__STATIC_INLINE void csi_fpp_set_base_addr(unsigned long base_addr)
+{
+    __set_MFPPCR((__get_MFPPCR() & (~MFPPCR_Base_Address_Msk))
+        | ((base_addr << MFPPCR_Base_Address_Pos) & MFPPCR_Base_Address_Msk));
+}
+
+/*@}  end of CSI_Core_FPPFunctions */
+
+
 /* ##########################  MMU functions  #################################### */
 /**
   \ingroup  CSI_Core_FunctionInterface
@@ -1369,10 +1646,13 @@ __STATIC_INLINE void csi_mmu_invalid_tlb_all(void)
   @{
   */
 
-#if CONFIG_CPU_C907 || CONFIG_CPU_C907FD || CONFIG_CPU_C907FDV || CONFIG_CPU_C907FDVM \
-    || CONFIG_CPU_C908 || CONFIG_CPU_C908V || CONFIG_CPU_C908I \
-    || CONFIG_CPU_C910 || CONFIG_CPU_C920 || CONFIG_CPU_C910V2 || CONFIG_CPU_C920V2 \
-    || CONFIG_CPU_R910 || CONFIG_CPU_R920
+#if CONFIG_CPU_XUANTIE_C907 || CONFIG_CPU_XUANTIE_C907FD || CONFIG_CPU_XUANTIE_C907FDV || CONFIG_CPU_XUANTIE_C907FDVM \
+    || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V || CONFIG_CPU_XUANTIE_C908I \
+    || CONFIG_CPU_XUANTIE_C910 || CONFIG_CPU_XUANTIE_C920 || CONFIG_CPU_XUANTIE_C910V2 || CONFIG_CPU_XUANTIE_C920V2 \
+    || CONFIG_CPU_XUANTIE_C910V3 || CONFIG_CPU_XUANTIE_C910V3_CP || CONFIG_CPU_XUANTIE_C920V3 || CONFIG_CPU_XUANTIE_C920V3_CP \
+    || CONFIG_CPU_XUANTIE_R908 || CONFIG_CPU_XUANTIE_R908FD || CONFIG_CPU_XUANTIE_R908FDV \
+    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP \
+    || CONFIG_CPU_XUANTIE_R910 || CONFIG_CPU_XUANTIE_R920
 /**
  \ingroup    CSI_tcm_register
  \defgroup   CSI_TCM
@@ -1392,24 +1672,24 @@ typedef union {
         unsigned long Size: 4;                           /*!< bit:  4..7  Size of ITCM */
         unsigned long _reserved2: 4;                     /*!< bit:  8..11 Reserved */
         unsigned long Base_Address: 52;                  /*!< bit: 12..63 Base address of DTCM */
-    } b;                                            /*!< Structure   Access by bit */
+    } b;                                                 /*!< Structure   Access by bit */
     unsigned long w;                                     /*!< Type        Access by whole register */
 } MITCMCR_Type;
 
-#define MITCMCR_Base_Address_Pos             12U                                              /*!< MITCMCR: Base_Address Position */
-#define MITCMCR_Base_Address_Msk             (0xfffffffffffffULL << MITCMCR_Base_Address_Pos)  /*!< MITCMCR: Base_Address Mask */
+#define MITCMCR_Base_Address_Pos             12U                                                 /*!< MITCMCR: Base_Address Position */
+#define MITCMCR_Base_Address_Msk             (0xfffffffffffffULL << MITCMCR_Base_Address_Pos)    /*!< MITCMCR: Base_Address Mask */
 
-#define MITCMCR_Size_Pos                     4U                                               /*!< MITCMCR: Size Position */
-#define MITCMCR_Size_Msk                     (0xfULL << MITCMCR_Size_Pos)                      /*!< MITCMCR: Size Mask */
+#define MITCMCR_Size_Pos                     4U                                                  /*!< MITCMCR: Size Position */
+#define MITCMCR_Size_Msk                     (0xfULL << MITCMCR_Size_Pos)                        /*!< MITCMCR: Size Mask */
 
-#define MITCMCR_INTERLEAVE_Pos               2U                                               /*!< MITCMCR: Interleave Position */
-#define MITCMCR_INTERLEAVE_Msk               (0x1ULL << MITCMCR_SIF_Pos)                       /*!< MITCMCR: Interleave Mask */
+#define MITCMCR_INTERLEAVE_Pos               2U                                                  /*!< MITCMCR: Interleave Position */
+#define MITCMCR_INTERLEAVE_Msk               (0x1ULL << MITCMCR_INTERLEAVE_Pos)                  /*!< MITCMCR: Interleave Mask */
 
-#define MITCMCR_ECC_EN_Pos                   1U                                               /*!< MITCMCR: ECC_EN Position */
-#define MITCMCR_ECC_EN_Msk                   (0x1ULL << MITCMCR_EN_Pos)                        /*!< MITCMCR: ECC_EN Mask */
+#define MITCMCR_ECC_EN_Pos                   1U                                                  /*!< MITCMCR: ECC_EN Position */
+#define MITCMCR_ECC_EN_Msk                   (0x1ULL << MITCMCR_ECC_EN_Pos)                      /*!< MITCMCR: ECC_EN Mask */
 
-#define MITCMCR_EN_Pos                       0U                                               /*!< MITCMCR: EN Position */
-#define MITCMCR_EN_Msk                       (0x1ULL << MITCMCR_EN_Pos)                        /*!< MITCMCR: EN Mask */
+#define MITCMCR_EN_Pos                       0U                                                  /*!< MITCMCR: EN Position */
+#define MITCMCR_EN_Msk                       (0x1ULL << MITCMCR_EN_Pos)                          /*!< MITCMCR: EN Mask */
 
 /**
  \brief  Consortium definition for accessing protection area selection register(MDTCMCR, 0x7f8).
@@ -1423,24 +1703,24 @@ typedef union {
         unsigned long Size: 4;                           /*!< bit:  4..7  Size of ITCM */
         unsigned long _reserved2: 4;                     /*!< bit:  8..11 Reserved */
         unsigned long Base_Address: 52;                  /*!< bit: 12..63 Base address of DTCM */
-    } b;                                            /*!< Structure   Access by bit */
+    } b;                                                 /*!< Structure   Access by bit */
     unsigned long w;                                     /*!< Type        Access by whole register */
 } MDTCMCR_Type;
 
-#define MDTCMCR_Base_Address_Pos             12U                                              /*!< MDTCMCR: Base_Address Position */
-#define MDTCMCR_Base_Address_Msk             (0xfffffffffffffULL << MDTCMCR_Base_Address_Pos)  /*!< MDTCMCR: Base_Address Mask */
+#define MDTCMCR_Base_Address_Pos             12U                                                 /*!< MDTCMCR: Base_Address Position */
+#define MDTCMCR_Base_Address_Msk             (0xfffffffffffffULL << MDTCMCR_Base_Address_Pos)    /*!< MDTCMCR: Base_Address Mask */
 
-#define MDTCMCR_Size_Pos                     4U                                               /*!< MDTCMCR: Size Position */
-#define MDTCMCR_Size_Msk                     (0xfULL << MDTCMCR_Size_Pos)                      /*!< MDTCMCR: Size Mask */
+#define MDTCMCR_Size_Pos                     4U                                                  /*!< MDTCMCR: Size Position */
+#define MDTCMCR_Size_Msk                     (0xfULL << MDTCMCR_Size_Pos)                        /*!< MDTCMCR: Size Mask */
 
-#define MDTCMCR_INTERLEAVE_Pos               2U                                               /*!< MDTCMCR: Interleave Position */
-#define MDTCMCR_INTERLEAVE_Msk               (0x1ULL << MDTCMCR_SIF_Pos)                       /*!< MDTCMCR: Interleave Mask */
+#define MDTCMCR_INTERLEAVE_Pos               2U                                                  /*!< MDTCMCR: Interleave Position */
+#define MDTCMCR_INTERLEAVE_Msk               (0x1ULL << MDTCMCR_INTERLEAVE_Pos)                  /*!< MDTCMCR: Interleave Mask */
 
-#define MDTCMCR_ECC_EN_Pos                   1U                                               /*!< MDTCMCR: ECC_EN Position */
-#define MDTCMCR_ECC_EN_Msk                   (0x1ULL << MDTCMCR_EN_Pos)                        /*!< MDTCMCR: ECC_EN Mask */
+#define MDTCMCR_ECC_EN_Pos                   1U                                                  /*!< MDTCMCR: ECC_EN Position */
+#define MDTCMCR_ECC_EN_Msk                   (0x1ULL << MDTCMCR_ECC_EN_Pos)                      /*!< MDTCMCR: ECC_EN Mask */
 
-#define MDTCMCR_EN_Pos                       0U                                               /*!< MDTCMCR: EN Position */
-#define MDTCMCR_EN_Msk                       (0x1ULL << MDTCMCR_EN_Pos)                        /*!< MDTCMCR: EN Mask */
+#define MDTCMCR_EN_Pos                       0U                                                  /*!< MDTCMCR: EN Position */
+#define MDTCMCR_EN_Msk                       (0x1ULL << MDTCMCR_EN_Pos)                          /*!< MDTCMCR: EN Mask */
 
 /*@} end of group CSI_TCM_bitfield */
 
@@ -1491,9 +1771,19 @@ __STATIC_INLINE uint32_t csi_itcm_get_size(void)
     uint32_t ret;
 
     sizemask.w = __get_MITCMCR();
-    ret = sizemask.b.Size;
-
-    return (1 << ret) << 10;
+    switch (sizemask.b.Size)
+    {
+        case 0x3: ret = 8 << 10; break;
+        case 0x4: ret = 16 << 10; break;
+        case 0x5: ret = 32 << 10; break;
+        case 0x6: ret = 64 << 10; break;
+        case 0x7: ret = 128 << 10; break;
+        case 0x8: ret = 256 << 10; break;
+        case 0x9: ret = 512 << 10; break;
+        case 0xa: ret = 1024 << 10; break;
+        default: ret = 0; break;
+    }
+    return ret;
 }
 
 /**
@@ -1507,9 +1797,19 @@ __STATIC_INLINE uint32_t csi_dtcm_get_size(void)
     uint32_t ret;
 
     sizemask.w = __get_MDTCMCR();
-    ret = sizemask.b.Size;
-
-    return (1 << ret) << 10;
+    switch (sizemask.b.Size)
+    {
+        case 0x3: ret = 8 << 10; break;
+        case 0x4: ret = 16 << 10; break;
+        case 0x5: ret = 32 << 10; break;
+        case 0x6: ret = 64 << 10; break;
+        case 0x8: ret = 128 << 10; break;
+        case 0x9: ret = 256 << 10; break;
+        case 0xa: ret = 512 << 10; break;
+        case 0xb: ret = 1024 << 10; break;
+        default:ret = 0; break;
+    }
+    return ret;
 }
 
 /**
@@ -1519,7 +1819,7 @@ __STATIC_INLINE uint32_t csi_dtcm_get_size(void)
   */
 __STATIC_INLINE void csi_itcm_set_base_addr(unsigned long base_addr)
 {
-    __set_MITCMCR((__get_MITCMCR() & (~MITCMCR_Base_Address_Msk)) | (base_addr & MITCMCR_Base_Address_Msk));
+    __set_MITCMCR((__get_MITCMCR() & (~MITCMCR_Base_Address_Msk)) | (base_addr << MITCMCR_Base_Address_Pos));
 }
 
 /**
@@ -1529,7 +1829,7 @@ __STATIC_INLINE void csi_itcm_set_base_addr(unsigned long base_addr)
   */
 __STATIC_INLINE void csi_dtcm_set_base_addr(unsigned long base_addr)
 {
-    __set_MDTCMCR((__get_MDTCMCR() & (~MDTCMCR_Base_Address_Msk)) | (base_addr & MDTCMCR_Base_Address_Msk));
+    __set_MDTCMCR((__get_MDTCMCR() & (~MDTCMCR_Base_Address_Msk)) | (base_addr << MDTCMCR_Base_Address_Pos));
 }
 
 /*@} end of CSI_Core_TCMFunctions */

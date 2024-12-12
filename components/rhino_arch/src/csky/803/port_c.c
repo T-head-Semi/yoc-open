@@ -17,7 +17,7 @@
 #include <k_api.h>
 #include <csi_core.h>
 
-#ifdef CONFIG_CPU_CK803EF
+#ifdef CONFIG_CPU_XUANTIE_E803EF
 void *cpu_task_stack_init(cpu_stack_t *stack_base, size_t stack_size,
                           void *arg, task_entry_t entry)
 {
@@ -100,7 +100,7 @@ void *cpu_task_stack_init(cpu_stack_t *stack_base, size_t stack_size,
 
     stk = (cpu_stack_t *)temp;
 
-#ifdef CONFIG_CPU_CK803EF
+#ifdef CONFIG_CPU_XUANTIE_E803EF
     psr = 0x80000140L;
 #else
     if (is_tee_mode()) {
@@ -113,7 +113,7 @@ void *cpu_task_stack_init(cpu_stack_t *stack_base, size_t stack_size,
     *(--stk) = (uint32_t)entry;                   /* entry point   */
     *(--stk) = (uint32_t)psr;                     /* PSR           */
 
-#ifdef CONFIG_CPU_CK803EF
+#ifdef CONFIG_CPU_XUANTIE_E803EF
     *(--stk) = (uint32_t)0xFFFFFFFFL;           /* VR15          */
     *(--stk) = (uint32_t)0xFFFFFFFFL;           /* VR14          */
     *(--stk) = (uint32_t)0xFFFFFFFFL;           /* VR13          */

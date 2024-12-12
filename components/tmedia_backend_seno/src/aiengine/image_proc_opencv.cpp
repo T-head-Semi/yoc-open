@@ -719,6 +719,16 @@ int TMImageProcOpenCV::CropResize(const TMVideoFrame &src,
     return TMResult::TM_OK;
 }
 
+int TMImageProcOpenCV::CvtResizeSplit(const TMVideoFrame &src, const TMImageProc::ImageProcConfig_t *dst_config, const int dst_count, TMVideoFrame **dst)
+{
+    return TMResult::TM_NOT_SUPPORT;
+}
+int TMImageProcOpenCV::CvtResizeMerge(const TMVideoFrame **src, const int src_count, const TMImageInfo::ImageSize_t &dst_size,
+                        TMImageInfo::PixelFormat dst_format, TMVideoFrame &dst)
+{
+    return TMResult::TM_NOT_SUPPORT;
+}
+
 REGISTER_IMAGE_PROC_CLASS(TMImageProcOpenCV);
 
 #endif

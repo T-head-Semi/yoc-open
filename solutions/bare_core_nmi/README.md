@@ -2,6 +2,10 @@
 
 `bare_core_nmi` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁exx cpu非屏蔽中断使用示例。
 
+示例程序中运行所依赖的bit将TIMER4作为NMI中断的触发源。代码中首先初始化TIMER4并设为3s后触发中断，然后关闭所有的中断，最后等待3s后NMI中断触发。
+
+注意：该示例当前仅支持在玄铁Exx处理器上编译运行
+
 # 基于Linux编译运行
 
 ## 编译

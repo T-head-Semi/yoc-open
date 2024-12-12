@@ -2,6 +2,8 @@
 
 `soc_core_vector` 是一个玄铁最小系统RTOS SDK中面向soc领域(使用osal封装)的玄铁cpu vector多线程使用示例，可运行在QEMU环境。
 
+注意：该示例仅支持玄铁处理器带v扩展的型号上编译运行
+
 # 基于Linux编译运行
 
 ## 编译
@@ -10,7 +12,9 @@
 ./do_build.sh <cpu> <platform> <kernel>
 ```
 - cpu: <br />
-        c906fdv c907fdv c907fdvm c907fdv-rv32 c907fdvm-rv32 c908v c920 c920v2 r920
+        r920 r908fdv r908fdv-cp <br />
+        c906fdv c908v c920 c920v2 c920v3 c920v3-cp <br />
+        c907fdv c907fdvm c907fdv-rv32 c907fdvm-rv32
 - platform: <br />
         xiaohui
 - kernel: <br />

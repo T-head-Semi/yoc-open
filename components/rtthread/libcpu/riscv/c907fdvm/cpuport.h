@@ -65,6 +65,18 @@ typedef union {
 #define CTX_MATRIX_CSR_REG_NR   0
 #endif
 
+#ifdef CONFIG_VIC_TSPDR
+#define VIC_TSPDR CONFIG_VIC_TSPDR
+#else
+#define VIC_TSPDR 0xE4000000
+#endif
+
+#if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
+#define RISCV_VIC_TSPDR (VIC_TSPDR + 0xC000)       /*soft irq register*/
+#else
+#define RISCV_VIC_TSPDR (VIC_TSPDR)                /*soft irq register*/
+#endif
+
 #ifndef __ASSEMBLY__
 #include <rtdef.h>
 

@@ -246,6 +246,10 @@ void pvmp3_resetDecoder(void  *pMem);
 ERROR_CODE pvmp3_framedecoder(tPVMP3DecoderExternal *pExt,
                               void              *pMem);
 
+#if CONFIG_PVMP3DEC_MEM_STATIC_ALLOC
+extern char g_pvmp3dec_mem[];
+#endif
+
 #ifdef __cplusplus
 }
 #endif

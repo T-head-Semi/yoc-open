@@ -34,7 +34,7 @@ yoc install fota_demo
 
 ##### D1平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_d1/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_d1/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`ble_host`,`freertos`最终如下所示:
 ```yaml
 depends:
@@ -50,7 +50,7 @@ depends:
 
 ##### bl606P平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_bl606p_e907/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_bl606p_e907/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`bl606p_bthost`,`bl606p_blimpls`,`freertos`如下所示
 ```yaml
 depends:
@@ -68,7 +68,7 @@ depends:
 
 ##### ch2601平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_ch2601/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_ch2601/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`freertos`如下所示
 ```yaml
 depends:
@@ -83,7 +83,7 @@ depends:
 
 ##### f133平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_f133/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_f133/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`ble_host`,`freertos` 最终如下所示:
 ```yaml
 depends:

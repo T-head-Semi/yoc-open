@@ -56,6 +56,7 @@ public:
         VIDEO_OUT_PICTURE_PIXEL_FORMAT,
         VIDEO_OUT_FRAME_RATE,
         VIDEO_OUT_MEDIUM_FORMAT,   //share memory or dma buff fd
+        VIDEO_OUT_FRAME_CACHE_THRESHOLD,   //threshold of frame cache
     };
     TMVideoOutput() 
     {
@@ -70,6 +71,10 @@ public:
     virtual int GetConfig(TMPropertyList &propList)                      = 0;
     virtual int Start()                                                  = 0;
     virtual int Stop()                                                   = 0;
+    virtual int Pause()                  { return TMResult::TM_NOT_SUPPORT; }
+    virtual int Resume()                 { return TMResult::TM_NOT_SUPPORT; }
+    virtual int Visible()                { return TMResult::TM_NOT_SUPPORT; }
+    virtual int Invisible()              { return TMResult::TM_NOT_SUPPORT; }
     virtual int SendFrame(TMVideoFrame &frame, int timeout)              = 0;
 
 protected:
@@ -92,6 +97,7 @@ protected:
             pList[i]->Add(TMProperty((int)PropID::VIDEO_OUT_PICTURE_PIXEL_FORMAT, (int)TMImageInfo::PixelFormat::PIXEL_FORMAT_NV12, "pixel format"));
             pList[i]->Add(TMProperty((int)PropID::VIDEO_OUT_FRAME_RATE, 25, "frame rate"));
             pList[i]->Add(TMProperty((int)PropID::VIDEO_OUT_MEDIUM_FORMAT, (int)MediumFormat::MEDIUM_FORMAT_DMA_BUFFER_FD, "data format"));
+            pList[i]->Add(TMProperty((int)PropID::VIDEO_OUT_FRAME_CACHE_THRESHOLD, -1, "cache threshold"));
         }
     }
 };

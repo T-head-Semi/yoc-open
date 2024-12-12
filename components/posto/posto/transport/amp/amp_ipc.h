@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <functional>
 #include <map>
+#include <stddef.h> 
 
 #include "posto/base/mutex.h"
 #include "posto/common/macros.h"

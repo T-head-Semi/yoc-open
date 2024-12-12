@@ -28,7 +28,7 @@ static void stduart_init(void)
 
 static void fs_init(void)
 {
-    int ret;
+    int ret __attribute__((unused));
 
     aos_vfs_init();
 #ifdef CONFIG_FS_EXT4
@@ -50,7 +50,25 @@ static void fs_init(void)
         LOGD(TAG, "fatfs register ok.");
     }
 #endif
+
 #ifdef CONFIG_FS_LFS
+#ifdef CONFIG_FS_LFS_MULTI
+    extern int32_t vfs_lfs_register_with_path(char *partition_desc, const char *path);
+    ret = vfs_lfs_register_with_path("lfs", "/mnt1");
+    if (ret != 0) {
+        LOGE(TAG, "the first littlefs register failed(%d)", ret);
+        aos_assert(false);
+    } else {
+        LOGD(TAG, "the first littlefs register ok.");
+    }
+    ret = vfs_lfs_register_with_path("lfs2", "/mnt2");
+    if (ret != 0) {
+        LOGE(TAG, "the second littlefs register failed(%d)", ret);
+        aos_assert(false);
+    } else {
+        LOGD(TAG, "the second littlefs register ok.");
+    }
+#else
     extern int32_t vfs_lfs_register(char *partition_desc);
     ret = vfs_lfs_register("lfs");
     if (ret != 0) {
@@ -59,6 +77,7 @@ static void fs_init(void)
     } else {
         LOGD(TAG, "littlefs register ok.");
     }
+#endif
 #endif
     LOGI(TAG, "filesystem init ok.");
 }

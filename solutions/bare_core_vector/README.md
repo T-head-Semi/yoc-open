@@ -2,6 +2,10 @@
 
 `bare_core_vector` 是一个玄铁最小系统RTOS SDK中面向baremetal领域的玄铁cpu vector使用示例，可运行在QEMU环境。
 
+用户可参考vector汇编相关代码实现其他功能。
+
+注意：该示例仅支持玄铁处理器带v扩展的型号上编译运行
+
 # 基于Linux编译运行
 
 ## 编译
@@ -10,8 +14,8 @@
 ./do_build.sh <cpu> <platform>
 ```
 - cpu: <br />
-        r920 <br />
-        c906fdv c908v c920 c920v2 <br />
+        r920 r908fdv r908fdv-cp <br />
+        c906fdv c908v c920 c920v2 c920v3 c920v3-cp <br />
         c907fdv c907fdvm c907fdv-rv32 c907fdvm-rv32
 - platform: <br />
         xiaohui

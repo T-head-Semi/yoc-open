@@ -210,7 +210,17 @@ static inline void slist_add(slist_t *node, slist_t *head)
 
 void slist_add_tail(slist_t *node, slist_t *head);
 
-void slist_del(slist_t *node, slist_t *head);
+static inline void slist_del(slist_t *node, slist_t *head)
+{
+    while (head->next) {
+        if (head->next == node) {
+            head->next = node->next;
+            break;
+        }
+
+        head = head->next;
+    }
+}
 
 static inline int slist_empty(const slist_t *head)
 {

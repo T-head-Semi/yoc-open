@@ -1,7 +1,7 @@
 #ifndef __RWNX_CMDS_H__
 #define __RWNX_CMDS_H__
 
-#include "list.h"
+#include "wifi_list.h"
 
 #include "lmac_types.h"
 #include "lmac_msg.h"

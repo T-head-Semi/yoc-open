@@ -1,21 +1,25 @@
-/*
+ /*
  * Copyright (C) 2017-2024 Alibaba Group Holding Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-/* FIXME: <iostream> cost a lot of codesize if included. */
-#if CONFIG_CPU_E906 || CONFIG_CPU_E906F || CONFIG_CPU_E906FD || CONFIG_CPU_E906P || CONFIG_CPU_E906FP || CONFIG_CPU_E906FDP \
-    || CONFIG_CPU_E907 || CONFIG_CPU_E907F || CONFIG_CPU_E907FD || CONFIG_CPU_E907P || CONFIG_CPU_E907FP || CONFIG_CPU_E907FDP \
-    || CONFIG_CPU_E902 || CONFIG_CPU_E902M || CONFIG_CPU_E902T || CONFIG_CPU_E902MT
-/* resource of smartl platform is limited */
-#define CODESIZE_SMALL
-#endif
-
 #include <stdio.h>
-#ifndef CODESIZE_SMALL
 #include <iostream>
 
 using namespace std;
-#endif
 
 extern "C" void cpp_demo_main(void);
 
@@ -74,13 +78,11 @@ static int cpp_main(void)
     volume = box2.height * box2.length * box2.breadth;
     printf("box2 volume: %f\r\n", volume);
 
-#ifndef CODESIZE_SMALL
     int i = 5;
     int j = 7;
     int x = std::max(i, j);
 
     cout << "max lenth:" << x << endl;
-#endif
     return 0;
 }
 

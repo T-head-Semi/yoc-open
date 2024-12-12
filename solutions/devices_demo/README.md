@@ -28,7 +28,7 @@ yoc install devices_demo
 
 ##### D1平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_d1/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_d1/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`ble_host`,`freertos`最终如下所示:
 ```yaml
 depends:
@@ -44,7 +44,7 @@ depends:
 
 ##### bl606P平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_bl606p_e907/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_bl606p_e907/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`bl606p_bthost`,`bl606p_blimpls`,`freertos`如下所示
 ```yaml
 depends:
@@ -62,7 +62,7 @@ depends:
 
 ##### ch2601平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_ch2601/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_ch2601/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`freertos`如下所示
 ```yaml
 depends:
@@ -77,7 +77,7 @@ depends:
 
 ##### f133平台
 
-比如在develop分支上面，需要修改`component/sdk_chip_f133/package.ymal`文件中的`depends`部分：
+比如在develop分支上面，需要修改`components/sdk_chip_f133/package.yaml`文件中的`depends`部分：
 将`rtthread`这个注释打开，需要注释掉这几个组件 `rhino`,`rhino_arch`,`rhino_pwrmgmt`,`ble_host`,`freertos`最终如下所示:
 ```yaml
 depends:
@@ -194,11 +194,18 @@ riscv64-unknown-elf-gdb yoc.elf -x gdbinit
 
    appdemohal gpio_in 34 2(使用IO34测试GPIO的输入，2表示下降沿中断)
 
+   devfs测试：
+   appdemohal devfs_gpio_out 34(34：使用IO34测试GPIO的输出)
+
+   appdemohal devfs_gpio_in 34 1(使用IO34测试GPIO的输入，1表示上升沿中断)
+
+   appdemohal devfs_gpio_in 34 2(使用IO34测试GPIO的输入，2表示下降沿中断)
+
 3. flash: appdemohal flash
 
 4. wdt: appdemohal wdt
 
-5. hci: appdemohal hci
+5. hci: appdemohal hci 注：在 rtthread 中不支持此测试
 
 6. uart
    appdemohal uart 138 139（138 139uart使用的IO口）

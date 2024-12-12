@@ -2,6 +2,13 @@
 
 `mcu_rtthread_smp` 是一个玄铁最小系统RTOS SDK中面向mcu领域的smp demo。该demo基于rtthread原生接口实现，可运行在QEMU环境。
 
+smp功能的使能主要依赖下面这两个配置(参考package.yaml):
+
+```bash
+  CONFIG_SMP: 1
+  CONFIG_NR_CPUS: 2
+```
+
 # 基于Linux编译运行
 
 ## 编译
@@ -10,8 +17,8 @@
 ./do_build.sh <cpu> <platform>
 ```
 - cpu: <br />
-        r910 r920 <br />
-        c908 c908v c908i c910 c910v2 c920 c920v2 <br />
+        r910 r920 r908 r908fd r908fdv r908-cp r908fd-cp r908fdv-cp <br />
+        c908 c908v c908i c910 c910v2 c910v3 c910v3-cp c920 c920v2 c920v3 c920v3-cp <br />
         c907 c907fd c907fdv c907fdvm c907-rv32 c907fd-rv32 c907fdv-rv32 c907fdvm-rv32
 - platform: <br />
         xiaohui

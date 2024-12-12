@@ -37,7 +37,18 @@ int uart_console_write(const void *buf, size_t len, void *privata_data)
         return 0;
     }
 
+#if defined(CONFIG_AOS_NEWLINE_SUPPORT) && (CONFIG_AOS_NEWLINE_SUPPORT > 0)
+    if((len >= 2 &&  ((char *)buf)[len - 1] == '\n' &&  ((char *)buf)[len - 2] != '\r')) {
+        rvm_hal_uart_send(console_get_uart(), buf, len - 1, AOS_WAIT_FOREVER);
+        rvm_hal_uart_send(console_get_uart(), "\r\n", 2, AOS_WAIT_FOREVER);
+    } else if(len == 1 &&  ((char *)buf)[0] == '\n') {
+        rvm_hal_uart_send(console_get_uart(), "\r\n", 2, AOS_WAIT_FOREVER);
+    } else {
+        rvm_hal_uart_send(console_get_uart(), buf, len, AOS_WAIT_FOREVER);
+    }
+#else
     rvm_hal_uart_send(console_get_uart(), buf, len, AOS_WAIT_FOREVER);
+#endif
     return len;
 }
 

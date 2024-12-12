@@ -53,6 +53,10 @@ FCESim::FCESim()
     mOpened = false;
     mDevIdx = -1;
     mTopN = 1;
+    mDim = FCE_DIM_UNKNOWN;
+    mWidth = FCE_DATA_UNKNOWN;
+    mSign = FCE_UNSIGN;
+    mEndian = FCE_ENDIAN_LITTLE;
 }
 
 FCESim::~FCESim()
