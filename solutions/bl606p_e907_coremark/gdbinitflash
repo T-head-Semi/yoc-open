@@ -1,4 +1,0 @@
-
-target remote localhost:1025
-
-set $mstatus&=~(0x00000008)

@@ -1,3 +1,0 @@
-实际验证替换下面两个文件既可正常工作
-custom_viparam.c
-custom_sysparam.c

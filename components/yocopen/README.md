@@ -1,1 +1,0 @@
-# yocopen sdk
